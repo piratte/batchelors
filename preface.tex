@@ -11,24 +11,42 @@ The operation and functionality of WLCG, as well as other Grid systems, is enabl
 
 The vast variety of requirements and needs of the user communities from the four LHC experiments is impossible to meet with only one set of middleware components. Consequently, each experiment user group started developing its own set of tools, which meet their needs. For example AliEn is a middleware solution made by the ALICE experiment collaboration and DIRAC was developed for the LHCb collaboration. Along with some packages from the WLCG-middleware they include some additional specific packages and provide complete framework for data processing according to the individual experiments' computing models.
 
-\section*{Workcycle}
-A WLCG user can process or analyze data sets of his/her interest on the Grid using some kind of User Interface \cite{UI}. Although the specific features of  UIs may differ for various user groups, the schéma is usually as follows:
-\begin{itemize}
-%
-\item As the first step, the user creates a file containing information about the job he/she wants to run: the name of executable file, input data, software packages needed for the processing, resources requirements (e.g. size of virtual memory neded, estimated time for the completion of the job and so on). The file syntax is called Job Description Language. % \cite{JDL}.
-%
-\item This file is submitted via the UI.
-%
-\item  The job descriton file is registered in a central queue or database and is evaluated by some kind of Workload Management (WMS) or Job Broker system. % \cite{WMS}
-%
-\item Based on the WMS evaluation, the user job is sent  to a concrete computing site, and after waiting in a local batch queue, the execution is started.
-%
-\item When the job finishes, the output files get registered in an appropriate file catalogue and stored on an available storage server on the Grid.
-%
-\item The user can check the status of his job using the tools provided by the UI. Also via the UI, the user can copy the output files of the job to his/her local machine. 
-%
-\end{itemize}
-The jobs submtted via the Grid UI can not be processed in an interactive mode.
+% Replace with something else??
+%\section*{Workcycle}
+%A WLCG user can process or analyze data sets of his/her interest on the Grid using some kind of User Interface \cite{UI}. Although the specific features of  UIs may differ for various user groups, the schéma is usually as follows:
+%\begin{itemize}
+%%
+%\item As the first step, the user creates a file containing information about the job he/she wants to run: the name of executable file, input data, software packages needed for the processing, resources requirements (e.g. size of virtual memory neded, estimated time for the completion of the job and so on). The file syntax is called Job Description Language. % \cite{JDL}.
+%%
+%\item This file is submitted via the UI.
+%%
+%\item  The job descriton file is registered in a central queue or database and is evaluated by some kind of Workload Management (WMS) or Job Broker system. % \cite{WMS}
+%%
+%\item Based on the WMS evaluation, the user job is sent  to a concrete computing site, and after waiting in a local batch queue, the execution is started.
+%%
+%\item When the job finishes, the output files get registered in an appropriate file catalogue and stored on an available storage server on the Grid.
+%%
+%\item The user can check the status of his job using the tools provided by the UI. Also via the UI, the user can copy the output files of the job to his/her local machine. 
+%%
+%\end{itemize}
+%The jobs submtted via the Grid UI can not be processed in an interactive mode.
 
 \section*{DIRAC}
 The Distributed Infrastructure with Remote Agent Control (DIRAC) is a software solution developed for the LHCb experiment. However, the experiments specific features are included as isolated plugins and modules making the whole system more universal \cite{Dir1}.
+
+\section*{DIRAC File Catalog}
+!! quick introduction to the file catalog
+
+\section*{Task}
+The task of this project is to add dataset support to the DIRAC DMS. Once the dataset features will 
+be implemented in DIRAC, it will have all the functionality
+to satisfy the needs of the Auger experiment computing model, so Auger will start using
+DIRAC as it’s middleware software solution.
+
+\section*{Definitions}
+\begin{description}
+\item[Dataset] is a set of files with some common features (files returned by a particular metadata query). In our context, we have frozen and dynamic datasets.
+\item[Dynamic dataset] is a set of files, where the files are not bound to the dataset in any way. Thus, when someone removes, changes or deletes a file, the dataset changes without giving any further notice.
+\item[Frozen dataset] is a set of files, which are fixed and cannot be changed, unless the dataset is released (melted).
+\item[Metadata] is the information describing the user data in order to easily select the file sets of interest for user applications.
+\end{description}
