@@ -7,15 +7,44 @@ to allow optimized, transparent and reliable usage. The DIRAC architecture consi
 cooperating Distributed Services and Light Agents built within the same DISET framework following 
 the Grid security standards. Apart from the efficient Workload Management Systems, which introduced
 the now widely used concept of Pilot Agent, DIRAC also offers a versatile Data Management System (DMS) 
-optimized for reliable data transfers.
+optimized for reliable data transfers. \cite{Dir2}
 
 \section{DIRAC architecture}
-% systems, services, agents, executors, clients
+DIRAC components can be grouped in to 5 categories: 
+\begin{description}
 
-\section{DIRAC components}
-% about different systems
+\item[Commands] \hfill \\
+Commands are one of the main interface tools for the users. Usually a command is a script, that contacts the server
+side, and executes the action it was designed for (e.g. upload file and register it in the File Catalog). Other UI
+functionality is provided by the web interface.
+
+\item[Services] \hfill \\
+Services are the main back-end component. A service provides a layer between the client running a command, and the
+Databases/Resources it is using. Example of a service is the FileCatalog, or the SystemAdministrator (which provides
+a server side of the System Administrator CLI, used for managing services running at a particular server).
+
+\item[Databases] \hfill \\
+Databases are the MySQL database structures, designed for specific purposes, so that when installing a database for
+e.g. FileCatalog, you don't have to install one used for e.g. JobLogging.
+
+\item[Agents] \hfill \\
+Agents are active software components which run as independent processes to fulfill one or several system functions.
+Agents are processes that perform actions periodically. Each cycle agents typically contact a service or look into a
+DB to check for pending actions, execute the required ones and report back the results. 
+
+\item[Executors] \hfill \\
+The Executor framework is designed around two components. The Executor Mind knows how to retrieve, store and dispatch
+tasks. And Executors are the working processes that know what to do depending on the task type. Each Executor is an
+independent process that connects to the Mind and waits for tasks to be sent to them by the Mind.
+\end{description}
+
+A System in the DIRAC framework means a grouping of DIRAC components designed to solve one pourpose
+
+\section{DIRAC Data Management System}
+
 
 \section{DIRAC File Catalog}
 % what is it
 % metadata
 % replica catalog
+% unlike ATLAS DDM, we have user defined metadata

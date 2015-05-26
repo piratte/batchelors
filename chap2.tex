@@ -1,11 +1,52 @@
-\chapter{The Metaquery}
+\chapter{Related works}
 
-\section{About the Metaquery}
-% what is it
-% where is it used
-% previous implementation
+For comparison we can look for other similar systems as DIRAC. The DFC was made by the LHCb experiment collaboration,
+its needs are similar to those of other LHC experiments so the ATLAS Distributed Data Management system and the AliEn 
+file catalog would make a good comparison.
 
-\section{Metaquery implementation}
-% what was added
-% how is it done and why
-% methods
+
+\section{ATLAS DDM}
+The ATLAS experiment at LHC is a general purpose particle detector designed to investigate physics at the energy
+frontier. The output data-rate, already reduced by the online trigger is  200-400Hz. Even with this reduction 
+ATLAS records a huge amount of data – more than 8PB of raw collision data have been taken since the LHC
+started running. After processing at ATLAS Tier-0s, the data is registered in the ATLAS Distributed Data Management
+system (DDM) \cite{ATLASDDM1}. Without deeply studying the implementation of it I would like to take a look 
+at its main concepts.
+
+Although a basic unit of data in the ATLAS DDM is a file the basic operational unit is a dataset: they may be
+transferred to grid sites, whereas single files may not. There is also one more layer of aggragation called the 
+container, which is a collection of datasets. Datasets may overlap and in practice they do so in a 
+hierarchical manner: production will use small datasets, referring to a few jobs processed at a site. These datasets
+are then aggregated into the main dataset, which refers to a particular task in the ATLAS
+production system. Then these main datasets may be added to a container, where the output of several 
+similar simulation tasks is gathered. Datasets may be opened (new files can be added to them), closed (no new files
+may be added, but could have versions which differ in file content) and frozen (no new files may be added and no 
+new versions created). 
+
+The responsibilities of the ATLAS DDM cover data registration, transfers between sites, file deletion, dataset 
+consistency ensuring (manage file loses on sites), enforcing ATLAS Computing model policies and monitoring. The
+current implementation is called Rucio (previous was DQ2).
+
+
+\subsection{Rucio}
+In this implementation files, datasets and containers follow an identical naming scheme which is composed of the
+scope and a name, called a data identifier \cite{ATLAS-Rucio}. Scopes are used to separate production and individual
+users. Metadata associated with a data identifier is represented using attributes (e.g. for file its availability,
+for dataset whether it is opened, closed or frozen,...) which are key-value pairs. The set of available attributes 
+is restricted. Some metadata attributes are user settable, e.g. physics attributes (run number). Non user settable 
+metadata include system attributes (size, creation time,...). For datasets and containers it is possible that the 
+value of metadata is a function of the metadata of its constituents, e.g. the total size is the sum of the
+sizes of the constituents.
+
+A Rucio Storage Element (RSE) is a repository for physical files. It is the smallest unit of
+storage space addressable within Rucio. It has an unique identifier and a set of properties (supported protocols,
+storage type, physical space,...). Physical files stored on RSEs are identified by their Physical File Name (PFN).
+The PFN is a fully qualified path identifying a replica of a file. The mapping between the file identifier and
+the PFN is a deterministic function of the identifier, RSE and protocol. Replica management in Rucio is based on
+replication rules defined on data identifier sets. A replication rule is owned by an account and defines the 
+minimum number of replicas to be available on a list of RSEs.
+
+\section{AliEn}
+
+
+\section{Main differences?}
