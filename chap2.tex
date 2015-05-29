@@ -48,30 +48,40 @@ minimum number of replicas to be available on a list of RSEs.
 
 \section{AliEn}
 
-AliEn (ALICE Environment) is a Grid framework developed by the Alice Collaboration and used in production for more 
-than 14 years. Since 2005, AliEn has been used for both data production and user analysis \cite{AliEn2}. 
+AliEn (ALICE Environment) is a Grid framework developed by the ALICE
+Collaboration and used in production for more than 14 years. Since 2005, AliEn
+has been used for both data production and user analysis  \cite{AliEn2}. 
 
-The AliEn File Catalogue is one of the key components in the AliEn system. It provides the mapping between 
-Logical File Names (LFNs) visible to end user and one or more Physical File Names (PFNs) which describe 
-the physical location of the file by identifying the name of a storage element and the path to the local file. 
-The LFNs are manipulated by user, two LFNs can point to one PFN. To prevent duplicate entries, each LFN is associated
-with a Globally Unique IDentifier (GUID).  
-The interface of the catalogue is a hierarchical structure of directories and files, similar to a UNIX file system.
-The directories and files in the File Catalogue have Unix like privileges. It also extends the familiar file system
-paradigm to include information about running processes in the system (in analogy to the /proc directory on Linux
-systems). Each job inserted into AliEn Task Queue gets a unique id and a corresponding /proc/id directory where it
-can register temporary files, standard input and output as well as all job products \cite{AliEn1}.
-The File Catalogue is designed to allow each directory node in the hierarchy to be supported by different 
-database engines, possibly running on different hosts and even having different internal table structures
-optimized for a particular directory branch. 
-From user point of view, the catalogue behaves as a single entity, internaly it is devided between the LFN and GUID
-catalogue, which are kept in separate databases. Every LFN database has an index table used to locate the database
-and table that contains all the information about the concrete LFN (owner, group, size...).  In addition, there 
-could be some user-defined tables containing metadata.
-AliEn supports file collections. A file collection is a user defined list of entries, which can be either another 
-collection, LFN or GUID. The collection looks like a normal file in the file catalogue, its size is the sum of 
-sizes of all its components. If a command is executed on a collection, it will be executed on every entry of that
-collection (e.g. if a user issues a command to replicate a collection, all the files of that collection will be 
-replicated). 
+The AliEn File Catalogue is one of the key components in the AliEn system. It
+provides the mapping between Logical File Names (LFNs) visible to the end user
+and one or more Physical File Names (PFNs) which describe the physical location
+of the file by identifying the name of a storage element and the path to the
+local file  The LFNs are manipulated by users, one LFN can point to more PFNs.
+To prevent duplicate entries, each LFN is associated with a Globally Unique
+IDentifier (GUID).
+The interface of the catalogue is a hierarchical structure of directories and
+files, similar to a UNIX file system. The directories and files in the File
+Catalogue have Unix like privileges.
+It also extends the familiar file system paradigm to include information about
+running processes in the system (in analogy to the /proc directory on Linux
+systems). Each job inserted into AliEn Task Queue gets a unique id and a
+corresponding /proc/id directory where it can register temporary files,
+standard input and output as well as all job products \cite{AliEn1}.
+The File Catalogue is designed to allow each directory node in the hierarchy to
+be supported by different database engines, possibly running on different hosts
+and even having different internal table structures optimized for a particular
+directory branch. 
+From user point of view, the catalogue behaves as a single entity, internally
+it is divided between the LFN and GUID catalogues, which are kept in separate
+databases. Every LFN database has an index table used to locate the files and
+table that contains all the information about the concrete LFN (owner, group,
+size...).
+In addition, there could be some user-defined tables containing metadata.
+AliEn supports file collections.  A file collection is a user defined list of
+entries, which can be ether another collections, LFNs or GUIDs. The collection
+looks like a normal file in the file catalogue, its size is the sum of sizes of
+all its components. If a command is executed on a collection, it will be
+executed on each entry of that collection (e.g. if a user issues a command to
+replicate a collection, all the files of that collection will be replicated).
 
 \section{Main differences?}
