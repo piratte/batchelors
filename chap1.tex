@@ -1,44 +1,62 @@
 \chapter{The Distributed Infrastructure with Remote Agent Control}
 
 \section{About DIRAC}
-The DIRAC (Distributed Infrastructure with Remote Agent Control) project is a complete Grid solution for a 
-medium-sized scientific community. DIRAC forms a layer between users and various computer resources 
-to allow optimized, transparent and reliable usage. The DIRAC architecture consists of numerous 
-cooperating Distributed Services and Light Agents built within the same DISET framework following 
-the Grid security standards. Apart from the efficient Workload Management Systems, which introduced
-the now widely used concept of Pilot Agent, DIRAC also offers a versatile Data Management System (DMS) 
-optimized for reliable data transfers. \cite{Dir2}
+The LHCb Collaboration\cite{LHCb} is running one of the four detectors attached to the LHC particle 
+collider at CERN, Geneva. The amount of data produced by the experiment
+annually is so large that it necessitates the development of a specialized system for the data
+production, reconstruction and analysis. The DIRAC project of the LHCb Collaboration was started to
+provide such a system.\cite{Dir2} The developers were aiming to create a easy to run system, seamlessly using 
+the various heterogeneous computing resources available to the LHCb Collaboration, that can be run by only one 
+production manager. 
 
-\section{DIRAC architecture}
-DIRAC components can be grouped in to 5 categories: 
+The DIRAC software architecture is based on a set of distributed, collaborating services. Designed to have a
+light implementation, DIRAC is easy to deploy, configure and maintain on a variety of platforms. Following
+the paradigm of a Services Oriented Architecture (SOA), DIRAC is lightweight, robust and scalable. Because one 
+of the primary goals was to support various virtual organization with their specific needs, it supports well 
+isolated plugable modules, where the organizations specific features can be located. It allows to construct medium
+sized grids of up to several thousands processors by integrating diverse resources within its integrated Workload
+Management System. The DIRAC Data Management components provide access to standard grid storage systems based 
+on the SRM standard interface \cite{SRM} or ordinary (S)FTP, HTTP file servers. The File Catalog options include the
+LCG File Catalog (LFC) as well as a simple DIRAC File Catalog, discussed later. 
+
+\subsection{DIRAC architecture}
+DIRAC components can be grouped in to 4 categories: 
 \begin{description}
 
-\item[Commands] \hfill \\
-Commands are one of the main interface tools for the users. Usually a command is a script, that contacts the server
-side, and executes the action it was designed for (e.g. upload file and register it in the File Catalog). Other UI
-functionality is provided by the web interface.
+\item[Resources] \hfill \\
+Resources are components which provide access to the computing and storage facilities available to
+DIRAC. Computing resources include individual PCs, computer farms, cloud resources and computing grids. Storage 
+resources include storage elements with SRM interface and most of the popular data access protocols (gridftp,
+(s)ftp, http,...) are integrated as well. DIRAC does not provide a complex storage element, it includes however a 
+Storage Element service which provides access to disk storage managed by a POSIX compliant file system.
 
 \item[Services] \hfill \\
-Services are the main back-end component. A service provides a layer between the client running a command, and the
-Databases/Resources it is using. Example of a service is the FileCatalog, or the SystemAdministrator (which provides
-a server side of the System Administrator CLI, used for managing services running at a particular server).
-
-\item[Databases] \hfill \\
-Databases are the MySQL database structures, designed for specific purposes, so that when installing a database for
-e.g. FileCatalog, you don't have to install one used for e.g. JobLogging.
+The DIRAC system is built around a set of loosely coupled services which keep the system state and
+help to carry out workload and data management tasks. The services are passive components which
+are only reacting to the requests of their clients possibly soliciting other services in order to
+accomplish the requests. Each service has typically a MySQL database backend to store the state
+information. The services accept incoming connections from various clients. These can be user interfaces,
+agents or running jobs. 
 
 \item[Agents] \hfill \\
-Agents are active software components which run as independent processes to fulfill one or several system functions.
-Agents are processes that perform actions periodically. Each cycle agents typically contact a service or look into a
-DB to check for pending actions, execute the required ones and report back the results. 
+Agents are light and easy to deploy software components built around a unified framework. They are active
+components, usually deployed close to the corresponding services, watching for changes in the service states and 
+reacting accordingly by initiating actions like job submission or result retrieval. 
 
-\item[Executors] \hfill \\
-The Executor framework is designed around two components. The Executor Mind knows how to retrieve, store and dispatch
-tasks. And Executors are the working processes that know what to do depending on the task type. Each Executor is an
-independent process that connects to the Mind and waits for tasks to be sent to them by the Mind.
+\item[Interfaces] \hfill \\
+The DIRAC functionality is exposed to the system developers and to the users in a variety of ways. 
+	\begin{itemize}
+	\item The DIRAC programming language is python, so the programming interfaces (APIs) are provided in this 		
+		language
+	\item For users the DIRAC functionality is available through a command line interface. Some DIRAC subsystems 		
+		have specialized shells to work with.
+	\item DIRAC also provides a web interface suitable for monitoring and managing the system behavior.
+	\end{itemize}
+
 \end{description}
 
-A System in the DIRAC framework means a grouping of DIRAC components designed to solve one pourpose
+\subsection{Framework}
+\cite{DISET}
 
 \section{DIRAC Data Management System}
 
@@ -47,4 +65,4 @@ A System in the DIRAC framework means a grouping of DIRAC components designed to
 % what is it
 % metadata
 % replica catalog
-% unlike ATLAS DDM, we have user defined metadata
+
