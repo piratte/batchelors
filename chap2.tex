@@ -97,7 +97,14 @@ above files, then just datasets: there are nested datasets and then containers. 
 structure in the names of datasets and containers, they have just unique identificators. 
 
 AliEn is opened for other virtual organizations, however there are only 2 other virtual organizations, using 
-AliEn services, while there are 20 using DIRAC. From the data management point of view, the structure is similar:
-there are files and datasets in a directory structured space, user can define new metadata. Unlike DIRAC, AliEn
-uses the directory structure not solely for keeping the information about the files, but also introduces the 
-\texttt{/proc} directory for temporary job files and outputs.
+AliEn services, while there are more than 15 using DIRAC. Because the administration of a whole middleware 
+solution requires high effort, it was proposed to integrate smaller independent DIRAC installations into 
+a single service to optimize operational costs, thus the France-Grilles DIRAC service (FG-DIRAC), 
+after an initial pre-production period of 6 months, was put into production in May 2012. \cite{FGDIRAC} 
+This enabled small user groups, which were not capable of installing, configuring and maintaining  
+such complex systems as DIRAC to use it without needing to understand and operate complex software and
+configurations. 
+From the data management point of view, the 
+structure is similar: there are files and datasets in a directory structured space, user can define new metadata.
+Unlike DIRAC, AliEn uses the directory structure not solely for keeping the information about the files, 
+but also introduces the \texttt{/proc} directory for temporary job files and outputs.
