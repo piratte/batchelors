@@ -1,9 +1,9 @@
-\chapter{The Distributed Infrastructure with Remote Agent Control}
+\chapter{DIRAC - The Distributed Infrastructure with Remote Agent Control}
 
 \section{About DIRAC}
 The LHCb Collaboration\cite{LHCb} is running one of the four detectors attached to the LHC particle 
 collider at CERN, Geneva. The amount of data produced by the experiment
-annually is so large that it necessitates the development of a specialized system for the data
+annually is so large that it requires development of a specialized system for the data
 production, reconstruction and analysis. The DIRAC project of the LHCb Collaboration was started to
 provide such a system.\cite{Dir2} The developers were aiming to create a easy to run system, seamlessly using 
 the various heterogeneous computing resources available to the LHCb Collaboration, that can be run by only one 
@@ -15,25 +15,26 @@ the paradigm of a Services Oriented Architecture (SOA), DIRAC is lightweight, ro
 of the primary goals was to support various virtual organization with their specific needs, it supports well 
 isolated plugable modules, where the organizations specific features can be located. It allows to construct medium
 sized grids of up to several thousands processors by integrating diverse resources within its integrated Workload
-Management System. The DIRAC Data Management components provide access to standard grid storage systems based 
-on the SRM standard interface \cite{SRM} or ordinary (S)FTP, HTTP file servers. The File Catalog options include the
-LCG File Catalog (LFC) as well as a simple DIRAC File Catalog, discussed later. 
+Management System. The DIRAC Data Management components provide access to standard grid storage systems. 
+The File Catalog options include the LCG File Catalog (LFC) as well as a simple DIRAC 
+File Catalog, discussed later. 
 
 \subsection{DIRAC architecture}
-DIRAC components can be grouped in to 4 categories: + [figure] %TODO
+DIRAC components can be grouped in to 4 categories: TODO: + [figure] %TODO
 \begin{description}
 
 \item[Resources] \hfill \\
 Resources are components which provide access to the computing and storage facilities available to
 DIRAC. Computing resources include individual PCs, computer farms, cloud resources and computing grids. Storage 
-resources include storage elements with SRM interface and most of the popular data access protocols (gridftp,
-(s)ftp, http,...) are integrated as well. DIRAC does not provide a complex storage element, it includes however a 
-Storage Element service which provides access to disk storage managed by a POSIX compliant file system.
+resources include storage elements with SRM interface \cite{SRM} and most of the popular data access 
+protocols (gridftp, (s)ftp, http,...) are integrated as well. DIRAC does not provide its own complex 
+storage element, it includes however a Storage Element service which provides access to disk 
+storage managed by a POSIX compliant file system.
 
 \item[Services] \hfill \\
 The DIRAC system is built around a set of loosely coupled services which keep the system state and
 help to carry out workload and data management tasks. The services are passive components which
-are only reacting to the requests of their clients possibly soliciting other services in order to
+are only reacting to the requests of their clients possibly contacting other services in order to
 accomplish the requests. Each service has typically a MySQL database backend to store the state
 information. The services accept incoming connections from various clients. These can be user interfaces,
 agents or running jobs. 
@@ -48,7 +49,7 @@ The DIRAC functionality is exposed to the system developers and to the users in 
 	\begin{itemize}
 	\item The DIRAC programming language is python, so the programming interfaces (APIs) are provided in this 		
 		language
-	\item For users the DIRAC functionality is available through a command line interface. Some DIRAC subsystems 		
+	\item For users the DIRAC functionality is available through a command line interface. Some subsystems 		
 		have specialized shells to work with.
 	\item DIRAC also provides a web interface suitable for monitoring and managing the system behavior.
 	\end{itemize}
@@ -62,24 +63,24 @@ DIRAC are:
 
 \begin{description}
 
-\item[DISET (DIRAC Secure Transport) secure communication protocol] 
+\item[DISET secure communication protocol] 
 	is the DIRAC secure transport layer. DISET was created by enhancing the XML-RPC
 	protocol with a secure layer with GSI compliant authentication mechanism \cite{DISET2}.
 	It takes care of all the communication needs between DIRAC components. 
-	Communication is done using plain TCP/IP when secure connections are not needed.
+	When secure connections are not needed communication is done using plain TCP/IP.
 	
 \item[Configuration System] 
 	is built to provide static configuration parameters to all the distributed DIRAC components. Being able to
-	distribute the configuration is critical to DIRAC. If the configuration data is not available, 
-	DIRAC systems can not work. For maximum reliability it is organized as a single master service where 
+	distribute the configuration is critical. If the configuration data is not available, 
+	the systems can not work. For maximum reliability it is organized as a single master service where 
 	all the parameter updates are done and multiple read-only slave services which are distributed geographically.
 
 \item[Web Portal]  
 	is the standard way to present information to visitors. It provides authentication based on user grid
 	credentials and user groups: ordinary users can see their jobs and have minimal interaction with
-	them, administrators can change the global configuration in a visual way. All the monitoring and control
-	tools of a DIRAC system are exported through the Web portal which makes them uniform for user
-	working in different environment and on different platforms.
+	them, administrators can change the global configuration in a graphical interface.
+	All the monitoring and control tools of a DIRAC system are exported through the Web portal 
+	which makes them uniform for user working in different environment and on different platforms.
 	
 \item[Logging System] 
 	is a uniform logging facility for all the DIRAC components.
@@ -99,10 +100,10 @@ are performed asynchronously on behalf of users, and others.
 The DIRAC middleware solution covers the whole range of tools to handle data management tasks. The low level 
 tools including many clients for various types of storage. DIRAC provides only a simple Storage Element service 
 accessible through the DISET protocol with a disk file system back-end. Otherwise, clients of all 
-the mostly used storage systems are provided, exposing to the users a uniform API. Many experiments use the LCG
+the common storage systems are provided, exposing to the users a uniform API. Many experiments use the LCG
 File Catalog (LFC) through a client API which connects it to the DIRAC system, others are using 
-the DIRACs own File Catalog, discussed later. The Replica Manager class which encapsulates all the basic file 
-management operations: uploading, replication, registration. The Replica Manager masks the diversities 
+the DIRACs own File Catalog. The Replica Manager class encapsulates all the basic file 
+management operations: uploading, replication, registration. It masks the diversities 
 of different storage systems and can handle several file catalogs at the same time. 
 The higher level Data Management components include an automatic Data Distribution System and
 a Data Integrity Checking System. The Data Distribution System allows defining destination storages
@@ -114,11 +115,12 @@ registered in various storage systems and file catalogs.
 \section{DIRAC File Catalog}
 
 Any middleware solution covering the problem of Data Management needs a Replica Catalog, to keep track of 
-file replication, and a File Catalog, to help the user find the files he wishes to use. The DIRAC 
-couples these two services into one introducing the DIRAC File Catalog (DFC) \cite{DFC}. Implemented using the DISET 
-framework, the access to DFC is done with an efficient secure protocol compliant with the grid security standards.
+file replication, and a File Catalog, to help the user find the files he wishes to work with. The DIRAC 
+couples these two services into one introducing the DIRAC File Catalog (DFC) \cite{DFC}. 
+Implemented using the DISET framework, the access to DFC is done with an efficient secure 
+protocol compliant with the grid security standards.
 The protocol allows also defining access rules for various DFC functionalities based on the user roles. The
-clients are getting the service access details from the common Configuration Service. The DFC behaviour
+clients are getting the service access details from the common Configuration Service. The DFC behavior
 is monitored using the standard DIRAC Monitoring System and the errors in the service functioning are
 reported to the Logging System. A MySQL database is used to store all the DFC contents. %TODO figure MYSQL schema
 The file data in DFC is stored in a hierarchical directory structure. All the standard file metadata 
@@ -130,22 +132,37 @@ is implemented as a number of plug-ins that can be chosen according to the needs
 
 The replica information can be stored in 2 different ways. In the first case, the full Physical File
 Names (PFN) are stored as complete access URLs. In the second case, the DFC exploits a convention
-that the PFNs are containing the corresponding Logical File Name (LFN) as its trailing part. This is a very common
-convention allowing easily establish the correspondence between the physical files and entries in the catalogs, 
-which helps when checking the data integrity. There is also no need to store the full PFN in the catalog, when
-the information about the wanted storage element is available, the PFN can be constructed on the fly and when 
-the SE description changes, for example, its access point, it is enough to change the SE description in the DIRAC 
+that the PFNs are containing the corresponding Logical File Name (LFN) as its trailing part. This helps 
+establishing correspondence between the physical files and entries in the catalogs when checking 
+the data integrity. There is also no need to store the full PFN in the catalog, when
+the information about the wanted storage element (SE) is available, the PFN can be constructed on the fly and when 
+the SE description changes, e.g. its access point, it is enough to change the SE description in the DIRAC 
 Configuration System to continue receiving correct PFNs. Support for managing various user and group usage 
 quotas is also implemented. Another feature requested based on the experience in 
-the HEP experiments is to store and provide information about ancestor-descendent relations between files. 
+the HEP experiments is to store and provide information about ancestor-descendant relations between files. 
 DFC supports this basic data provenance information. 
 
 \subsection{Metadata Catalog}
 
 The metadata catalog keeps track of nonstandard metadata. It allows defining arbitrary user metadata 
-associated with its files and directories as arbitrary key-value pairs. The catalog administrators can 
-declare certain keys, or tags, as indexes. In the current implementation, whenever an index is being declaired, 
+associated with its files and directories as key-value pairs. The catalog administrators can 
+declare certain keys, as indexes. In the current implementation whenever an index is being declaired, 
 another table in the MySQL database is created to store the values of the respective metadata. The indexed 
-metadata can be used in the file lookup operations. The metadata values are inherited in the directory structure.
-The value types include numbers, strings or time stamps. Storing the metadata in the same directory hierarchy 
+metadata can be used in file lookup operations. The value types include numbers, strings or time stamps. 
+The metadata values are inherited in the directory structure. Storing the metadata in the same directory hierarchy 
 as the file logical name space allows keeping the same schema for both replica and metadata information.
+
+\subsection{Interfaces}
+
+The DFC is providing several user interfaces. The command \texttt{dirac-dms-filecatalog-cli} launches a shell
+connected to the file catalog the user is supposed to interact with based on his or hers user group and VO. Its 
+functionality is similar to a classic UNIX shell, with commands like \texttt{ls, cd, chmod,...}, with added 
+file catalog specific commands for handling metadata, replication, storage element usage reports.
+
+The DFC Python API is a programming interface that allows creating any custom commands or even
+small applications working on the DFC data.
+
+The only graphical interface is provided by the web portal. It features the DFC file browser
+with a look and feel similar to the desktop applications. The DFC Web interface is built in the DIRAC 
+general Web Portal framework and provides a secure access based on the user certificates loaded into 
+the web browser.
