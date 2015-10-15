@@ -32,6 +32,25 @@
 \usepackage{graphicx}
 \usepackage{amsthm}
 
+%% Balicky pro pekne vytisteni zdrojoveho kodu
+\usepackage{listings}
+\usepackage{xcolor}
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{FFFFFF}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=none,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=none,
+    backgroundcolor=\color{background},
+}
+
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
 %% POZOR, nezapomeňte vyplnit jméno práce a autora.
@@ -234,9 +253,13 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 
 %%% Jednotlivé kapitoly práce jsou pro přehlednost uloženy v samostatných souborech
 \include{preface}
-\include{chap1}
-\include{chap2}
-\include{chap3}
+\include{about_dirac}
+\include{related_works}
+\include{metaquery}
+\include{dataset_manager}
+\include{databases}
+%\include{nosql_metadata_catalog}
+\include{usage}
 
 
 % Ukázka použití některých konstrukcí LateXu (odkomentujte, chcete-li)
