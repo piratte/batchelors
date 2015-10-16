@@ -1,11 +1,79 @@
-\chapter{The Dataset Manager}
+\chapter{The DatasetManager}
 
-Dataset manager is one of the modules used by the File Catalog. 
+As mentioned before, the DIRAC software architecture is based on a set of distributed,
+collaborating services, following the paradigm of a Services
+Oriented Architecture (SOA). The services themselves consist of
+modules. DatasetManager is one of the modules used by the File Catalog, where others are
+e.g. FileMetadata module, DirectoryTree module etc. 
+
+The dataset is a set of files grouped together based on their common metadata. To accomplish
+that, each dataset is associated with a metaquery and all the files that it contains are
+satisfying it. Moreover there are two types of datasets: a dynamic dataset and 
+a frozen (static) one. A dynamic dataset is exactly what is described above: a set of all the
+files that satisfy a given metaquery. The dynamic dataset changes every time a file satisfying
+its metaquery is added to the file catalog. A frozen dataset is a snapshot of a dynamic dataset. The
+user can freeze a dataset whose files he is using in order to maintain the set of files for
+further evaluation or cross-checking the results of his work with other users over the same
+set of files. When a frozen dataset is then deleted, the user is asked whether the files, that 
+are exclusively contained by this dataset shall be deleted. 
 
 \section{Previous status}
-
-\section{Features}
+Before the start of this project, a prototype of the DatasetManager module was already 
+in place. It hinted, what the structure of the database should look like and what is the
+expected behavior of the datasets, but many crucial features (deleting files when a 
+frozen dataset is deleted, dataset replication and overlaping,...) and properties (identifying
+the dataset based on its' location in the directory tree) were missing.
 
 \section{Implementation details}
+
+The DatasetManager is made to be one of the modules in the file catalog. In order to accomplish
+this, its made as a class which the FileCatalog object would hold an instance of. The class offers
+multiple methods handling the datasets and exposing them to other modules. All the state of the 
+datasets is saved in a database, the class itself holds only an instance of the database interface
+object, so restarting the FileCatalog service is done without any problems. The module handles mainly
+basic CRUD operations with some additions.
+
+\subsection{Releasing and freezing dataset}
+
+When a dataset is created an entry is inserted to the database, where the datasets name, id, metaquery, 
+status, id of the directory its located in, UID and GID of the user who created it and some other 
+properties are saved. When a dataset is frozen, the query is evaluated and all the files, which the
+dataset contains, are associated with it (the records are inserted in the table \texttt{FC\_MetaDatasetFiles}.
+Releasing the dataset only deletes these records and updates the cached properties. 
+
+When deleting a dataset its record in the database is removed. Moreover when the deleted dataset is frozen
+its requested it would be deleted with the files it contains not including files contained by another frozen
+dataset. This is done using one select
+
+\begin{lstlisting}[language=sql]
+SELECT FileID 
+FROM FC_MetaDatasetFiles 
+WHERE FileID IN (
+	SELECT FileID 
+	FROM FC_MetaDatasetFiles 
+	WHERE DatasetID=X
+) 
+GROUP BY FileID 
+HAVING Count(*)=1;
+\end{lstlisting}
+
+where in place of the \texttt{X} symbol is inserted the id of the deleted dataset. The user is then 
+asked, whether he wants to really delete those files from the file catalog. When he agrees, a request to
+the DIRACs Request Management system (RMS) \cite{RMS} is created. This system ensures that all the files
+are deleted from all the storage elements as well as from the file catalog database, 
+which prevents memory leaks. The RMS is also used when dataset replication is executed.
+
+\subsection{Dataset overlapping}
+
+Another important feature not included in the previous implementation was determining 
+dataset overlapping. In the first step the metaqueries of the two datasets are combined
+into a conjunction and the check proceeds only if the conjunction is a valid metaquery.
+The procedure of the second step depends on the statuses of the datasets. When the two
+datasets in question are dynamic, the files satisfying the conjunction of their metaqueries
+are their overlap. When comparing a dynamic and a frozen dataset, the files satisfying 
+the conjunction are compared to the list of the frozen datasets files. Finally, when 
+two frozen datasets are checked, the sets of their files are simply compared and if 
+the intersection is empty they do not overlap.
+
 
 \section{Tests?}

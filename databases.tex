@@ -1,6 +1,25 @@
-\chapter{Used technologies}
+\chapter{FileCatalog connected to a NoSQL database}
+One of the main goals of this project was to test whether connecting the 
+file catalog, more specifically its metadata part, to a NoSQL database would 
+improve the feedback speed of the service thus making it more pleasant to use
+or make it easier to implement and maintain. The database had to satisfy the
+following conditions in order to be connectable to DIRAC and deployable in
+the computing centers.
+
+\begin{itemize}
+\item There has to be a free version which will DIRAC be using.
+\item The database has to have a python interface or client.
+\end{itemize}
+
+The characteristics of the data itself add some restrictions. There are two
+ways the data would be extracted from the database. For directories 
+the database has to be able to retrieve all the metadata associated with a directory
+with a certain ID. The files are queried based on the terms in the metaquery so
+all the querying techniques the metaquery could use have to be possible, including
+range queries. 
 
 \section{Apache Cassandra}
+
 
 \section{MongoDB}
 
