@@ -49,9 +49,9 @@ the query would be possible. Although the similarity with SQL would suggest othe
 it turned out that this kind of indexing does not support range queries. 
 
 After understanding more thoroughly how Cassandra works, another data model was introduced 
-using most of Cassandras specific features. The only property Cassandra guaranties is that 
+using most of Cassandras specific features. The key properties Cassandra guaranties are that 
 rows are not divided across multiple nodes in the cluster and column keys inside the row
-are sorted. These two main characteristics lead to the functional data model. For  
+are sorted. Based on these two main characteristics a functioning data model was created. For  
 directories row IDs are mapped on directory IDs and the model is similar to the previous one. 
 Retrieving a row with given row ID is one of natively supported operations.
 For files each metaname has its row, column names are meta values and column values are sets of 
@@ -72,32 +72,81 @@ file IDs of files having this metaname and value associated with them.
 
 The rows are grouped
 in tables by value type, because the algorithm used to sort the
-column names has to be unified per table. There also is an index over fileID sets, 
+column names is unified per table. There also is an index over fileID sets, 
 so that retrieving all metadata for one specific file is possible, but the scheme is 
 not optimized for this operation.
 
-
-
-\begin{lstlisting}[language=sql, caption=Data structure described by CQL]
+\begin{listing}
+\begin{minted}{sql}
 CREATE TABLE file_int (
     metaname text,
     value int,
     fileid set<int>,
     PRIMARY KEY (metaname, value)
 );
-\end{lstlisting}
+\end{minted}
+\caption{Data structure described using CQL}
+\end{listing}
 
 In CQL this structure looks like a table with three columns and a compound primary key which
 brings the main disadvantage of this approach: meta names can be queried only one at a time and
-the result has to be then composed in the code of the application.
+the result has to be then finalized in the DIRACs code.
 
-\begin{lstlisting}[language=sql, caption=Example query]
+\begin{listing}
+\begin{minted}{sql}
 SELECT fileid 
 	FROM file_int 
 	WHERE metaname='metaInt1' AND value>3;
-\end{lstlisting}
+\end{minted}
+\caption{Example query}
+\end{listing}
 
-\section{MongoDB}
+\section{Document databases}
 
-\section{Elasticsearch}
+Both following databases are document databases and the data scheme is fairly similar in both
+of them. The metadata are stored in a JSON file with properties being meta names, indexes above
+properties and key mapped to the dir or file ID.
 
+\begin{listing}
+\begin{minted}{json}
+{
+	'metaInt1' : 1,
+	'metaStr1' : 'qwerty',
+	'metaInt3' : 123
+}
+\end{minted}
+\caption{JSON structure used in document databases}
+\end{listing}
+
+Document databases were not the first pick during developing this project, because the idea of
+storing metadata in a JSON structure and then building indexes above the properties is not as
+familiar as Cassandras columns, but it turned out to be even easier to use.
+
+\subsection{MongoDB}
+
+\subsection{Elasticsearch}
+
+\section{Database tests}
+
+For testing a single server was used (formerly in one of the Tier-2 computing centers, equipped
+%TODO parametry storje puppet2 )
+The testing data was generated trying to copy the production data structure. There is expected to
+be over 10 million files with approximately different 20 meta names. %TODO odkaz na prilohu s Jirkovym mailem 
+The set generated had $10 000 000 - 1$ files with $1$ to $998$ metrics associated with them 
+(the generator chose a randomly $1$ to $499$ integer metrics and the same number of string ones).
+The metrics names were \texttt{test[Int|Str]NNN}, where \texttt{NNN} stands for a number. The
+integer values were all picked from the interval $[1;1000]$ and the string values were one of the
+words from the NATO phonetic alphabet %TODO citace.
+This lead to the easier composition of testing queries.
+
+The data in form of two csv files with lines \texttt{id,metaname,value} were 63 and 59 GB big.
+
+\subsection{Loading the big data}
+
+Elasticsearchs python interface features a bulk load function which when fed with a generator
+loads the data in chunks of 500. Unfortunately it crashes on a TimeoutException from time to 
+time making the loading a rather long procedure. 
+
+MongoDB features a command \texttt{mongoimport} which can read a file of JSON objects and load
+them all. Its' pace on the test data was approximately $150-200$ entries per second. Unluckily 
+the script froze from time to time so loading the whole dataset took again several days.
