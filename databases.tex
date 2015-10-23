@@ -103,13 +103,19 @@ SELECT fileid
 
 \section{Document databases}
 
-Both following databases are document databases and the data scheme is fairly similar in both
-of them. The metadata are stored in a JSON file with properties being meta names, indexes above
-properties and key mapped to the dir or file ID.
+Both following databases are document-oriented and the data scheme is fairly similar in both
+of them. A document-oriented database replaces the concept of a \textit{row} from the world of relational 
+databases with a more dynamic and versatile \textit{document}. Allowing arrays and embedded documents the 
+document-oriented databases provides de-normalization of the data and represention of complex 
+relationships in a single document. Also there are no predefined schemas, which helps with development 
+and testing and in case of this project is essential because the number of associated metadata varies between 
+files. The metadata are stored in a JSON structure with fields being meta names, indexes above properties and key 
+mapped to the dir or file ID.
 
 \begin{listing}
 \begin{minted}{json}
 {
+	'id'       : id
 	'metaInt1' : 1,
 	'metaStr1' : 'qwerty',
 	'metaInt3' : 123
@@ -124,7 +130,42 @@ familiar as Cassandras columns, but it turned out to be even easier to use.
 
 \subsection{MongoDB}
 
+Mongo is a open-source document-oriented database storing JSON files. As of October 2015, MongoDB is the fourth 
+most popular type of database management system, and the most popular for document stores 
+\footnote{Ranking database management systems according to their popularity: \url{http://db-engines.com/en/ranking}, ref. October 2015}. 
+In MongoDB the document is the basic unit, documents are grouped into collections, which can be thought of as 
+a table with a dynamic schema. Single instance of MongoDB can have multiple databases, each can host multiple 
+collections. In collections documents are identified using a special field \texttt{\_id} which has to be unique
+within a collection (this projects maps the file or directory ids from the file catalog to this id field) \cite{MongoBook}.
+
+\subsubsection{Using MongoDB}
+
+Running MongoDB is rather simple: on Scientific Linux it could be installed from a package with reasonable 
+defaults (the only thing that was changed on the testing server was the data directory and listening on the 
+universal IP address had to be enabled, default is only local host). %TODO finish
+
 \subsection{Elasticsearch}
+
+Elasticsearch (ES) is a real-time distributed opend-source analytics and search engine \cite{ESBook}, 
+build on top of Apache Lucene\footnote{\url{https://lucene.apache.org/}}. Unlike very complex Lucern, 
+ES features a simple RESTful API. Moreover it could be used not only for full-text search, but for real-time
+analytics or, which is important for this project, as a distributed document store, where \textit{every} field
+is indexed and search-able. Its' python 
+client\footnote{\url{http://elasticsearch-py.readthedocs.org/en/master/}} provides a wrapper for the RESTful API
+as well as some useful additional commands called helpers (e.g. for loading the data, the command 
+\texttt{helpers.bulk(es, dataToLoad(size))} was used).
+
+\subsubsection{Using ES}
+
+As well as MongoDB, Elasticsearch ships in a package so downloading and installing it is very simple. The 
+configuration file is in \texttt{yaml} format. There is no need for any initial data structure,
+the first data are simply inserted using the correct URL\footnote{\url{http://host:port/index/doc_type/doc_id}
+is the URL the RESTful API uses, when using the python library \texttt{index, doc\_type}\texttt{doc\_id} are 
+specified using the function arguments}. ES structures data in indexes and types (hence the \texttt{index} and
+\texttt{doc\_type} in the URL). An Elasticsearch cluster can contain multiple indexes, which can contain multiple
+types (there is a rough parallel with the world of relational databases, where indexes would be databases and
+types would correspond with tables). Unlike the relational databases ES can create the index and type with the 
+first inserted document using its' default configuration.
 
 \section{Database tests}
 
