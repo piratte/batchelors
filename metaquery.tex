@@ -1,11 +1,41 @@
 \chapter{The Metaquery}
 
-\section{About the Metaquery}
-% what is it
-% where is it used
-% previous implementation
+When working with metadata in the DFC's metadata catalog, one of the most important operations is 
+to find files by giving a specific set of conditions on their metadata. Each condition concerning
+one metafield is called term and is in the form of \texttt{<metafield> <operator> <value>}, where
+metafield is name of the metadata field, operator is one of the classical comparison operators:
+\texttt{=},\texttt{!=},\texttt{<},\texttt{<=},\texttt{>},\texttt{>=} and value is the value
+specifying the condition. In the current production implementation the terms are coupled 
+together by writing them in a space separated list which translates into a conjunction with
+each space having the same meaning as the logical operator \texttt{AND}.
 
-\section{Metaquery implementation}
-% what was added
-% how is it done and why
-% methods
+As the DFC grows bigger and more elaborate, the need for new classes emerges. Before the 
+start of this project, the information about the metaquery was stored in a python dictionary
+data structure and every operation upon it was done in the code of the concrete procedure. 
+Because the handling was done similarly in several places a decision was made to create a 
+Metaquery class to encapsulate all the handling methods. 
+
+There was also a need for extending the metaquery language by adding the logical operators 
+\texttt{OR} and \texttt{NOT} and allowing brackets. Another task was set when the demand for
+the user input to be optimized and normalized was raised. This meant that if two users 
+inserted two equivalent metaqueries but wrote them down 
+differently\footnote{e.g. \texttt{A=2 AND (B>3 OR C!=4)} vs. \texttt{A=2 AND B>3 OR A=2 AND C!=4}}, 
+internally they would be stored the same way. This is opening an option for the metaquery 
+to be hashed so that all the equivalent metaqueries would have the same hash and thus it 
+could be used as a database index etc. The task of studying all the possible utilizations of the 
+metaquery hash is not the aim of this project but should be engaged in the future. 
+
+\section{Metaquery theory}
+
+When evaluating the trueness of a formula on a given substitution of its free variables, the 
+form that comes in mind is the disjunctive normal form (DNF). A logical formula is in DNF if
+it is a disjunction of at least one conjunction of at least one literal. In our case literals 
+are the terms specifying conditions on metadata and the variable substitution is the trueness
+of the term when a specific value of metadata is subsituted for the metafield name. The whole
+formula is then true when at least one of the disjunts evaluates as true, which makes evaluating
+the trueness of the formula on a given set of metadata values rather easy.
+
+To be able to use this form, 
+
+\section{Metaquery in practice}
+Serializing the parsed metaquery is done using a list of dictionaries. Ea

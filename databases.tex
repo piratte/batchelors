@@ -143,6 +143,7 @@ within a collection (this projects maps the file or directory ids from the file 
 Running MongoDB is rather simple: on Scientific Linux it could be installed from a package with reasonable 
 defaults (the only thing that was changed on the testing server was the data directory and listening on the 
 universal IP address had to be enabled, default is only local host). 
+% When querying in a collection that does not exist, there is no error, just no result, which can be confusing
 
 \subsection{Elasticsearch}
 
@@ -166,6 +167,8 @@ specified using the function arguments}. ES structures data in indexes and types
 types (there is a rough parallel with the world of relational databases, where indexes would be databases and
 types would correspond with tables). Unlike the relational databases ES can create the index and type with the 
 first inserted document using its' default configuration.
+
+% When a value of a field is set to a non-numeric value, a numeric_range query cannot be executed after that, even though all the currently set values are numeric
 
 \section{Database tests}
 
