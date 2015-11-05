@@ -32,10 +32,46 @@ form that comes in mind is the disjunctive normal form (DNF). A logical formula 
 it is a disjunction of at least one conjunction of at least one literal. In our case literals 
 are the terms specifying conditions on metadata and the variable substitution is the trueness
 of the term when a specific value of metadata is subsituted for the metafield name. The whole
-formula is then true when at least one of the disjunts evaluates as true, which makes evaluating
+formula is then true when at least one of the disjuncts evaluates as true, which makes evaluating
 the trueness of the formula on a given set of metadata values rather easy.
 
-To be able to use this form, 
+To be able to use this form, an efficient practical implementation had to be discussed, having in 
+mind that backwards compatibility with the old metaquery representation is a key issue. The decision 
+was made to represent the formula in DNF using a list of dictionaries, where each dictionary 
+represents one conjunct of the outer disjunction. This is similar to the status before this project
+when only one dictionary was used to represent a conjunction of terms. 
 
 \section{Metaquery in practice}
-Serializing the parsed metaquery is done using a list of dictionaries. Ea
+
+The Metaqury class contains 
+\begin{itemize}
+\item the information about the metaquery itself written in a form of list,
+\item information about the types of all the metafields,
+\item handling methods and functions.
+\end{itemize}
+Serialization of the class is done by exporting the list containing information about the formula. 
+When a handling method has to be used somewhere in the code, a new instance of the class is created 
+using this list. This helps to limit the network traffic to a minimum. 
+
+The class has a constructor taking 2 parameters: \texttt{queryList} the list representation of the 
+metaquery and \texttt{typeDict} the dictionary of metafield types. When a new metaquery is to be 
+created from a user input, an instance of the Metaquery class is created without any information
+about the query itself, but ideally using a valid \texttt{typeDict}. Then the query string is parsed, tokenized and fed into the \texttt{setMetaQuery} method.
+
+\begin{listing}
+\begin{minted}{python}
+# typeDict is set earlier in the function
+mq = MetaQuery( typeDict = typeDict )
+mq.setMetaQuery( mq.parseQueryString(userInputString) )
+\end{minted}
+\caption{Creating an instance of the Metaquery class using user input}
+\end{listing}
+
+The tokenizing has to be done character by character to allow the user to input a query without 
+caring about whitespace distribution. If the user wants to use the old input method\footnote{
+Query string is in form \texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*}}
+it is possible and the output will be one conjunction as expected (AND operators are added in the
+correct places). However when the user uses at least one logical operator, no other additions are made
+and the rest of the input has to be correctly formed. The method \texttt{setMetaQuery} takes care of 
+the normalizing (converting to DNF) and optimizing of the formula. Every logical formula 
+can be transferred to DNF\footnote{}.% <- proof that every formula can be transfered to DNF
