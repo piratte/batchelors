@@ -47,11 +47,13 @@ The Metaqury class contains
 \begin{itemize}
 \item the information about the metaquery itself written in a form of list,
 \item information about the types of all the metafields,
-\item handling methods and functions.
+\item handling and evaluating methods and functions.
 \end{itemize}
 Serialization of the class is done by exporting the list containing information about the formula. 
 When a handling method has to be used somewhere in the code, a new instance of the class is created 
 using this list. This helps to limit the network traffic to a minimum. 
+
+\subsection{query input}
 
 The class has a constructor taking 2 parameters: \texttt{queryList} the list representation of the 
 metaquery and \texttt{typeDict} the dictionary of metafield types. When a new metaquery is to be 
@@ -67,11 +69,48 @@ mq.setMetaQuery( mq.parseQueryString(userInputString) )
 \caption{Creating an instance of the Metaquery class using user input}
 \end{listing}
 
-The tokenizing has to be done character by character to allow the user to input a query without 
-caring about whitespace distribution. If the user wants to use the old input method\footnote{
-Query string is in form \texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*}}
-it is possible and the output will be one conjunction as expected (AND operators are added in the
-correct places). However when the user uses at least one logical operator, no other additions are made
-and the rest of the input has to be correctly formed. The method \texttt{setMetaQuery} takes care of 
-the normalizing (converting to DNF) and optimizing of the formula. Every logical formula 
-can be transferred to DNF\footnote{}.% <- proof that every formula can be transfered to DNF
+When the user inputs a query it first has to be tokenized. To enable the user to input the query without caring 
+about whitespace distribution, the tokenization is done character by character.
+If the user wants to use the old input method\footnote{Query string is in form 
+\texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*}}
+it is possible and the output will be one conjunction as expected (AND operators are inserted in the
+correct places). However when the user uses at least one logical operator, no additional insertions are made
+and the rest of the input has to be a well formed formula. 
+
+Once the query string is tokenized, it has to be converted into DNF and optimized to gain the wanted metaquery 
+properties. Every formula can be transferred to DNF\footnote{} and % <- proof that every formula can be transfered to DNF
+the method \texttt{setMetaQuery} takes care of it and also calls a private method for optimization.
+The normalization algorithm follows the proof in a sense that when it traverses the input left to right, 
+recursively descending into every sub-formula, it first removes the negation\footnote{removing negation in this 
+case involves switching the meaning of the logical operators in a sub-formula when the NOT operator is in front of  
+the parenthesis surrounding it or changing the value of the comparison operator (e.g. $ < \: \rightarrow \: \geq$) 
+when the NOT operator is in front of a term} 
+and then takes care of the elements themselves, distributing the disjunction in the correct manner. % <- refraze?
+The function takes one token of the query at a time, creates terms and connects them into inner conjunctions. 
+These are then redistributed to form the outer disjunction converting the input into DNF. 
+While adding terms into conjunction and redistributing them following the distributivity rules of boolean algebra 
+the elements of newly created conjunctions are checked for duplicities and colliding terms and the user is alerted 
+when any are discovered (e.g. when the user input would lead to a situation where \texttt{meta1 = 2 AND meta1 = 
+3}, the algorithm detects this, fails and alerts the user\footnote{This is a feature requested by the DIRAC community}. 
+The query in DNF is then handed to a method that goes through the disjuncts, checks them for common metafields 
+and whether they are both relevant for the meaning of the query. If not, the irrelevant parts are removed. % example here?
+
+\subsection{query evaluation}
+
+Inputting a metaquery obviously is a major challenge of the Metaquery class, although the main reason the file
+catalog features metaqueries is obviously the search for files. For files already stored in databases the DIRAC
+project tries to leave as much work as possible on the database, so the only thing to solve in this area is the 
+interface between the database and the file catalog (the conversion between the Metaquery class and the databases
+query language). This problem is tackled in chapter \ref{chap:databases}. Applying the metaquery to a concrete 
+set of metadata (for instance when a new file is uploaded to the file catalog) is handled by the Metaquery class 
+itself, although there has been a discussion about whether it is possible to let the database engine handle this 
+situation as well. The conclusion was that applying an ordinary query would not be as big of a problem to 
+justify initiation of network communication between the catalog server and the database server (which is the 
+current practice of deployment). Instead a dictionary where metafields are keys indexing their values is passed 
+to the method \texttt{applyQuery()} on an initialized Metaquery class. Evaluating whether a concrete set of 
+metadata satisfies the metaquery is made as simple as possible by using the DNF, where each element of the 
+disjunction is tested (all the conditions in the element must be satisfied by the set of metadata) and if at least
+one passes, the query is satisfied.
+
+\subsection{query output}
+
