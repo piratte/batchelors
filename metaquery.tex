@@ -114,3 +114,9 @@ one passes, the query is satisfied.
 
 \subsection{query output}
 
+When developing the outputting function of the Metaquery class, the need for consistent result for equivalent 
+metaqueries was the main goal. A disjunction is commutative so there has to be an artificial rule forcing the 
+disjuncts to appear always in the same order. Internaly the elements of the disjunction are represented as 
+dictionaries, so sorting them according to their keys (the metafields) is the obvious choice. However theoretically
+there could be two disjuncts with exactly the same metafields, so the values also had to be considered. In
+the case of identical metafields the optimization function guarantees that their values are going to be different.
