@@ -135,10 +135,8 @@ protocol compliant with the grid security standards.
 The protocol allows also defining access rules for various DFC functionalities based on the user roles. The
 clients are getting the service access details from the common Configuration Service. The DFC behavior
 is monitored using the standard DIRAC Monitoring System and the errors in the service functioning are
-reported to the Logging System. A MySQL database is used to store all the DFC contents. 
-
-%TODO figure MYSQL schema
-
+reported to the Logging System. A MySQL database is used to store all the DFC contents (for the scheme of the 
+database, see figure \ref{fig:FCMySQLUML}). 
 
 Following the plug-able module schema, there are many file catalog modules altering its behavior. For example the 
 file data in DFC is stored in a hierarchical directory structure and its implementation depends on the current
@@ -152,6 +150,18 @@ module plugged in the \texttt{dtree} slot in the \texttt{FileCatalogDB} class in
 	FileCatalogHandler class, the FileCatalogDB class then issues requests for MySQL database, sometimes using one
 	or more of its' modules}
 	\label{fig:FCClasses}
+\end{figure}
+
+\begin{figure}[b]
+	\centering
+	\includegraphics[width=\textwidth]{FCUML.pdf}
+	\caption{UML diagram of the tables in the current MySQL implementation of the File Catalogs DB. The colors are
+	done to simplify understanding of the situation: the grey tables are "the core" of the File Catalog, blue are
+	directory related, green are file related, purple are for the dataset manager, yellow are the Replica Catalog
+	and red are the Metadata Catalog (in initial state. When the user starts creating indexes, for each 
+	index there is going to be a new table). Note that there are no relations between the tables, this is because
+	no foreign keys are declared, all the table relationships are handled in DIRACs code.}
+	\label{fig:FCMySQLUML}
 \end{figure}
 
 %All the standard file metadata 
