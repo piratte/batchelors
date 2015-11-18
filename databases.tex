@@ -240,23 +240,24 @@ requirements\footnote{for the default storage engine} are listed in table \ref{t
 
 \begin{table}[h]
 \centering
-\caption{The time and storage requirements for indexes used in MongoDB}
 \label{tab:indexBuildTimes}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
-Field    & Time     & Space (default) & Space (VT with zlib) & Space (VT with zlib) \\ \hline
-testInt1 & 00:20:50 & not measured    &                      &                      \\ \hline
-testInt2 & 00:20:00 & not measured    &                      &                      \\ \hline
-testInt3 & 00:19:59 & 169936          &                      &                      \\ \hline
-testInt4 & 00:20:12 & 169972          &                      &                      \\ \hline
-testInt5 & 00:19:58 & 169944          &                      &                      \\ \hline
-testStr1 & 00:20:06 &                 &                      &                      \\ \hline
-testStr2 & 00:20:13 &                 &                      &                      \\ \hline
-testStr3 & 00:20:51 &                 &                      &                      \\ \hline
-testInt6 & 00:21:03 &                 &                      &                      \\ \hline
-testInt7 & 00:19:57 &                 &                      &                      \\ \hline
-testInt8 & 00:19:58 &                 &                      &                      \\ \hline
+Field    & Time     & Disk Space (MMAP) & Disk Space (WT) \\ \hline
+testInt1 & 00:20:50 & 211 390           & 46 785          \\ \hline
+testInt2 & 00:20:00 & 211 407           & 46 789          \\ \hline
+testInt3 & 00:19:59 & 211 390           & 46 785          \\ \hline
+testInt4 & 00:20:12 & 211 415           & 46 789          \\ \hline
+testInt5 & 00:19:58 & 211 390           & 46 785          \\ \hline
+testStr1 & 00:20:06 & 203 043           & 44 351          \\ \hline
+testStr2 & 00:20:13 & 203 026           & 44 351          \\ \hline
+testStr3 & 00:20:51 & 203 043           & 44 356          \\ \hline
+testInt6 & 00:21:03 & 211 407           & 46 789          \\ \hline
+testInt7 & 00:19:57 & 211 399           & 46 785          \\ \hline
+testInt8 & 00:19:58 & 211 390           & 46 785          \\ \hline
 \end{tabular}
+\caption{The time and storage requirements for indexes used in MongoDB. The indexes were built while using
+the MMAP storage engine. Sizes are in MB.}
 \end{table}
 
 Elasticsearch does not have a similar limitation, however the queries were kept
@@ -277,7 +278,8 @@ figure \ref{fig:EScache} suggests, flushing the cache does not make a notable di
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\textwidth]{ES_comparison.pdf}
+	\input{img/ES_comparison.tex}
+%	\includegraphics[width=\textwidth]{ES_comparison.pdf}
 	\caption{Query times for Elasticsearch comparing performance with and without dumping depending on number of 
 	hits (logarithmic scale)}
 	\label{fig:EScache}
@@ -291,15 +293,17 @@ can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fi
 
 \begin{table}[]
 \centering
-\caption{Disk usage comparison of MongoDBs storage engines}
+
 \label{tab:MongoComp}
 \begin{tabular}{|l|r|r|}
 \hline
-Storage engine                      & \multicolumn{1}{l|}{Total database size (MB)} & \multicolumn{1}{l|}{Total index size} \\ \hline
-MMAPv1                              & 136 161                                       &                                       \\ \hline
-WiredTiger with zlib compression    & 22 788                                        &                                       \\ \hline
-WiredTiger with default compression & 42 249                                        & 169936                                \\ \hline
+Storage engine                      & \multicolumn{1}{l|}{Total database size} & \multicolumn{1}{l|}{Total index size} \\ \hline
+MMAPv1                              & 136 161                                  & 2 579                                 \\ \hline
+WiredTiger with zlib compression    & 22 788                                   & 615                                   \\ \hline
+WiredTiger with default compression & 42 249                                   & 616                                   \\ \hline
 \end{tabular}
+\caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not rely on the
+compression used. All sizes are in MB.}
 \end{table}
 
 \begin{figure}[t]
