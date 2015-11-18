@@ -3,31 +3,36 @@
 When working with metadata in the DFC's metadata catalog, one of the most important operations is 
 to find files by giving a specific set of conditions on their metadata. Each condition concerning
 one metafield is called term and is in the form of \texttt{<metafield> <operator> <value>}, where
-metafield is the name of the metadata field, operator is one of the classical comparison operators:
-\texttt{=},\texttt{!=},\texttt{<},\texttt{<=},\texttt{>},\texttt{>=} and value is the value
-specifying the condition. In the current production implementation the terms are coupled 
+\begin{itemize}
+\item metafield is the name of the metadata field,
+\item operator is one of the classical comparison operators: \texttt{=},\texttt{!=},\texttt{<},\texttt{<=},
+	\texttt{>},\texttt{>=}, 
+\item value is the value specifying the condition.
+\end{itemize}
+
+In the current production implementation the terms are coupled 
 together by writing them in a space separated list which translates into a conjunction with
 each space having the same meaning as the logical operator \texttt{AND}.
 
 As the DFC grows bigger and more elaborate, the need for new classes emerges. Before the 
 start of this project, the information about the metaquery was stored in a python dictionary
 data structure and every operation upon it was done in the code of the particular procedure. 
-Because the handling was done similarly in several places a decision was made to create a 
+The handling was done similarly in several places so a decision was made to create a 
 Metaquery class to encapsulate all the handling methods. 
 
 There was also a need for extending the metaquery language by adding the logical operators 
 \texttt{OR} and \texttt{NOT} and allowing brackets. Another task was set when the demand for
 the user input to be optimized and normalized was raised. This meant that if two users 
 inserted two equivalent metaqueries but wrote them down 
-differently\footnote{e.g. \texttt{A=2 AND (B>3 OR C!=4)} vs. \texttt{A=2 AND B>3 OR A=2 AND C!=4}}, 
-internally they would be stored the same way. This is opening an option for the metaquery 
+differently (e.g. \texttt{A=2 AND (B>3 OR C!=4)} vs. \texttt{A=2 AND B>3 OR A=2 AND C!=4}), 
+internally they would be stored in the same way. This is opening an option for the metaquery 
 to be hashed so that all the equivalent metaqueries would have the same hash and thus it 
 could be used as a database index etc. The task of studying all the possible utilizations of the 
 metaquery hash is not the aim of this project but should be engaged in the future. 
 
-\section{Metaquery theory}
+\section{Metaquery Theory}
 
-When evaluating the trueness of a formula on a given substitution of its free variables, the 
+When evaluating the truth-value of a formula on a given substitution of its free variables, the 
 form that comes in mind is the disjunctive normal form (DNF). A logical formula is in DNF if
 it is a disjunction of at least one conjunction of at least one literal. In our case literals 
 are the terms specifying conditions on metadata and the variable substitution is the trueness
@@ -41,7 +46,7 @@ was made to represent the formula in DNF using a list of dictionaries, where eac
 represents one conjunct of the outer disjunction. This is similar to the status before this project
 when only one dictionary was used to represent a conjunction of terms. 
 
-\section{Metaquery implementation}
+\section{Metaquery Implementation}
 
 The Metaqury class contains 
 \begin{itemize}
@@ -53,7 +58,7 @@ Serialization of the class is done by exporting the list containing information 
 When a handling method has to be used somewhere in the code, a new instance of the class is created 
 using this list. This helps to limit the network traffic to a minimum. 
 
-\subsection{query input}
+\subsection{Query Input}
 
 The class has a constructor taking 2 parameters: \texttt{queryList} - the list representation of the 
 metaquery and \texttt{typeDict} - the dictionary of metafield types. When a new metaquery is to be 
@@ -61,31 +66,31 @@ created from a user input, an instance of the Metaquery class is created without
 about the query itself, but ideally using a valid \texttt{typeDict}. Then the query string is parsed, 
 tokenized and fed into the \texttt{setMetaQuery} method.
 
-\begin{listing}
-\begin{minted}{python}
-# typeDict is set earlier in the function
-mq = MetaQuery( typeDict = typeDict )
-mq.setMetaQuery( mq.parseQueryString(userInputString) )
-\end{minted}
-\caption{Creating an instance of the Metaquery class using user input}
-\end{listing}
+%\begin{listing}
+%\begin{minted}{python}
+%# typeDict is set earlier in the function
+%mq = MetaQuery( typeDict = typeDict )
+%mq.setMetaQuery( mq.parseQueryString(userInputString) )
+%\end{minted}
+%\caption{Creating an instance of the Metaquery class using user input}
+%\end{listing}
 
 When the user inputs a query it first has to be tokenized. To enable the user to input the query without caring 
 about whitespace distribution, the tokenization is done character by character.
-If the user wants to use the old input method\footnote{Query string is in form 
-\texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*}}
+If the user wants to use the old input method (query string is in form 
+\texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*})
 it is possible and the output will be one conjunction as expected (AND operators are inserted in the
 correct places). However when the user uses at least one logical operator, no additional insertions are made
 and the rest of the input has to be a well formed formula. 
 
-Once the query string is tokenized, it has to be converted into DNF and optimized to gain the wanted metaquery 
+Once the query string is tokenized, it has to be converted into DNF and optimized to gain the metaquery 
 properties. Every formula can be transferred to DNF\footnote{} and % <- proof that every formula can be transfered to DNF
 the method \texttt{setMetaQuery} takes care of it and also calls a private method for optimization.
 The normalization algorithm follows the proof in a sense that when it traverses the input left to right, 
-recursively descending into every sub-formula, it first removes the negation\footnote{removing negation in this 
-case involves switching the meaning of the logical operators in a sub-formula when the NOT operator is in front of  
-the parenthesis surrounding it or changing the value of the comparison operator (e.g. $ < \: \rightarrow \: \geq$) 
-when the NOT operator is in front of a term} 
+recursively descending into every sub-formula, it first removes the negation\footnote{Removing negation depends on 
+the position of the NOT operator. When it is in front of the parenthesis surrounding a sub-formula it involves 
+switching the meaning of the logical operators in it. When the NOT operator is in front of a term the comparison 
+operators have to change (e.g. $ < \: \rightarrow \: \geq$).} 
 and then takes care of the elements themselves, distributing the disjunction in the correct manner. % <- refraze?
 The function takes one token of the query at a time, creates terms and connects them into inner conjunctions. 
 These are then redistributed to form the outer disjunction converting the input into DNF. 
@@ -96,13 +101,13 @@ when any are discovered. For instance when the user input would lead to a situat
 user\footnote{This is a feature requested by the DIRAC community}. 
 
 
-The query in DNF is then handed to a method that goes through the disjuncts, checks them for common metafields 
+The query in DNF is then passed to a method that goes through the disjuncts, checks them for common metafields 
 and whether they are both relevant for the meaning of the query. If not, the irrelevant parts are removed. % example here?
 
-\subsection{query evaluation}
+\subsection{Query Evaluation}
 
 To provide a correct input is a major challenge of the Metaquery class, although the main reason the file
-catalog features metaqueries evidently is the search for files. For files already stored in databases the DIRAC
+catalog features metaqueries is evidently the search for files. For files already stored in databases the DIRAC
 project tries to leave as much work as possible on the database, so the only thing to solve in this area is the 
 interface between the database and the file catalog (the conversion between the Metaquery class and the databases
 query language). This problem is tackled in chapter \ref{chap:databases}. 
@@ -110,7 +115,7 @@ query language). This problem is tackled in chapter \ref{chap:databases}.
 Applying the metaquery to a particular
 set of metadata (for instance when a new file is uploaded to the file catalog) is handled by the Metaquery class 
 itself, although there has been a discussion whether it is possible to let the database engine handle this 
-situation. The conclusion was that applying an ordinary query would not be as big of a problem to 
+situation. The conclusion was that applying an ordinary query would not be a big enough problem to 
 justify initiation of network communication between the catalog server and the database server (which is the 
 current practice of deployment). Instead a dictionary where metafields are keys indexing their values is passed 
 to the method \texttt{applyQuery()} on an initialized Metaquery class. Evaluating whether a concrete set of 
@@ -118,11 +123,11 @@ metadata satisfies the metaquery is made as simple as possible by using the DNF,
 disjunction is tested (all the conditions in the element must be satisfied by the set of metadata). If at least
 one passes, the query is satisfied.
 
-\subsection{output of the query}
+\subsection{Output of the Query}
 
 For the development of the function providing the output of the Metaquery class, the need for consistent result of equivalent 
 metaqueries was the main goal. A disjunction is commutative so there has to be an artificial rule forcing the 
 disjuncts to appear always in the same order. Internaly the elements of the disjunction are represented as 
-dictionaries, so sorting them according to their keys (the metafields) is the obvious choice. However theoretically
+dictionaries, so sorting them according to their keys (the metafields) is the obvious choice. However, theoretically
 there could be two disjuncts with exactly the same metafields, so the values also had to be considered. In
 the case of identical metafields the optimization function guarantees that their values are going to be different.

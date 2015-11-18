@@ -202,7 +202,7 @@ the main testing data was generated trying to mimic the production data structur
 be over 10 million files with approximately different 20 meta names. %TODO odkaz na prilohu s Jirkovym mailem 
 The set generated had $10 000 000 - 1$ files with $1$ to $998$ metanames associated with them\footnote{ 
 (the generator chose a randomly $1$ to $499$ integer metrics and the same number of string ones)}, which is more
-then the production data would have, but gave the testing more data to be based upon.
+then the production data would have, but gave the testing more data to stress the databases.
 The metrics names were \texttt{test[Int|Str]NNN}, where \texttt{NNN} stands for a number. The
 integer values were all picked from the interval $[1;1000]$ and the string values were one of the
 words from the NATO phonetic alphabet\cite{NATO}, which lead to the easier composition of testing queries. 
@@ -227,16 +227,16 @@ loaded, they could be back-uped using the utility \texttt{mongodump} and then ag
 command \texttt{mongorestore}. These two utilities ran without problems and where used when changing the 
 storage engine.
 
-\subsection{Testing query performance on a query sample}
+\subsection{Testing query performance on a predefined sample}
 
 The task of the database in this deployment will be to accept a query, execute the search and return all the 
 ids of documents\footnote{Document ids are mapped on file ids, so this procedure is returning the ids of files
 that satisfy the query} satisfying the query. To measure the results as precisely as possible, a list of
 queries was generated. When testing one database, all other database services were stopped so that they do not
 interfere with the test. To effectively search for data in MongoDB the document properties have to be 
-indexed. Indexes were made on several integer fields (testInt1-8) and three string fields 
-(testStr1,testStr2,testStr3). The time cost of building the indexes and their space 
-requirements\footnote{for the default storage engine} are listed in table \ref{tab:indexBuildTimes}.
+indexed manually. Indexes were made on several integer fields (testInt1-8) and three string fields 
+(testStr1,testStr2,testStr3). The time cost of building\footnote{for the default storage engine} the 
+indexes and their space requirements are listed in table \ref{tab:indexBuildTimes}.
 
 \begin{table}[h]
 \centering
@@ -263,10 +263,8 @@ the MMAP storage engine. Sizes are in MB.}
 Elasticsearch does not have a similar limitation, however the queries were kept
 the same so that the comparison is as fair as possible. 
 
-
-The queries were made randomly combining the integer and string properties. The number of hits was not considered
-when generating the queries. All the queries used are 
-%TODO add queries to an appendix?
+The queries were generated randomly combining the integer and string properties. The number of hits was not 
+considered while generating the queries. All the queries used are in appendix A (??)%TODO add queries to an appendix?
 
 The program testing the performance is a python script running on a personal computer in the same LAN as the 
 database machine (similarly to the expected deployment of the service). The measured time is the interval between 
@@ -285,15 +283,14 @@ figure \ref{fig:EScache} suggests, flushing the cache does not make a notable di
 	\label{fig:EScache}
 \end{figure}
 
-The original MongoDB instance was using the old storage engine used by versions up to 3.0\footnote{MMAPv1 Storage 
-Engine based on memory mapped files}. Since then new storage engine WiredTiger\footnote{
-\url{https://docs.mongodb.org/manual/core/wiredtiger/}} became available so the performances could compared.
+The original MongoDB instance was using the default storage engine used by versions up to 3.0\footnote{MMAPv1 
+Storage Engine based on memory mapped files}. There is also a new storage engine WiredTiger\footnote{
+\url{https://docs.mongodb.org/manual/core/wiredtiger/}} available so the performances of those two were compared.
 Moreover the new engine adds the option of choosing the compression strategy, the comparison of disk space usage 
 can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fig:MDBcomparison}.
 
 \begin{table}[]
 \centering
-
 \label{tab:MongoComp}
 \begin{tabular}{|l|r|r|}
 \hline
@@ -303,13 +300,55 @@ WiredTiger with zlib compression    & 22 788                                   &
 WiredTiger with default compression & 42 249                                   & 616                                   \\ \hline
 \end{tabular}
 \caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not rely on the
-compression used. All sizes are in MB.}
+compression used. All sizes are in MB. For comparison the size of the data in Elasticsearch is 59 716MB.}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{MDB_comparison.pdf}
 	\caption{Query times for MongoDB comparing performance with different storage engines and compression 
 	options (logarithmic scale)}
 	\label{fig:MDBcomparison}
 \end{figure}
+
+The conclusion is that if the administrator does not have a critically low amount of disk space available, MongoDB
+works best with the new WiredTiger storage engine with default compression. In figure \ref{fig:DBscomparison} we 
+can see the comparison of performance on the sample queries between the WiredTiger configuration of MongoDB and 
+Elasticsearch. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{DBs_comparison.pdf}
+	\caption{Query times for MongoDB comparing performance with different storage engines and compression 
+	options (logarithmic scale)}
+	\label{fig:DBscomparison}
+\end{figure}
+
+The queries on MongoDB are taking much more time than on Elasticsearch. Luckily MongoDB provides
+a tool for explaining query execution which comes in very useful when trying o investigate efficiency problems
+like this one. When trying to explain the query %TODO insert query
+the output of the command can be seen in listing %TODO add listing and reference
+As we can see, MongoDB tries all the indexes associated with one of the queried properties, then picks one and 
+based on just it performs the search. The search results are then filtered so that the returned fields satisfy the
+other conditions of the input query. To test the best possible performance, special compound indexes were created 
+for each query and the performance was tested using these indexes. 
+
+%TODO create the indexes, test the queries and post the results
+
+\subsection{The current deployment performance}
+
+Currently the database back-end to all the services in DIRAC, where a database is needed including the File Catalog
+and its' metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen in figure
+\ref{fig:DFCUML}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{DFCDB.pdf}
+	\caption{The File Catalog part of the database scheme. The tables on the left are created implicitly with the
+	rest of the scheme, they are used  for keeping track of the types of metafields and un-indexed  metadata 
+	values. For each new indexed field a new table is created, in this scheme there are 3 indexed file metafields
+	(X, Y, Z) and three indexed directory metafields (A,B,C).}
+	\label{fig:DFCUML}
+\end{figure}
+
+When
