@@ -36,6 +36,13 @@
 \usepackage{minted}
 \graphicspath{ {img/} }
 
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algorithm,algorithmicx,algpseudocode}
+%\algrenewcommand{\algorithmiccomment}[1]{\hfill$\blacktriangleright$ #1}
+
+
+
 %% Balicky pro pekne vytisteni zdrojoveho kodu
 \usepackage{listings}
 \usepackage{xcolor}
@@ -263,7 +270,7 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 \include{metaquery}
 \include{dataset_manager}
 \include{databases}
-%\include{nosql_metadata_catalog}
+\include{nosql_metadata_catalog}
 \include{usage}
 
 

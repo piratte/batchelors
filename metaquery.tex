@@ -84,8 +84,42 @@ correct places). However when the user uses at least one logical operator, no ad
 and the rest of the input has to be a well formed formula. 
 
 Once the query string is tokenized, it has to be converted into DNF and optimized to gain the metaquery 
-properties. Every formula can be transferred to DNF\footnote{} and % <- proof that every formula can be transfered to DNF
-the method \texttt{setMetaQuery} takes care of it and also calls a private method for optimization.
+properties. Every formula can be transferred to DNF and  method \texttt{setMetaQuery} takes care of it and also 
+calls a private method for optimization.
+
+\begin{algorithm}[h]
+\caption{Convert the input string into DNF query}
+\begin{algorithmic}[1]
+\Procedure{ToDnf}{inputList}
+\State \textit{termTmp} = [ ]; \textit{last} = [ ]
+\ForAll{\textit{atoms} in \textit{inputList}} 
+	\If{\textit{atom} is '$($'}  
+		\State Find correct '$)$'
+		\State \textit{last} $\leftarrow$ ToDNF(sub-list between parentheses)
+	\ElsIf{\textit{atom} is logical operator} 
+		\If{\textit{termTmp} is not empty}
+			\State \textit{newTerm} $\leftarrow$ Parse(\textit{termTmp})
+			\State \textit{termTmp} = [ ]
+		\ElsIf{\textit{negGlobal} is set}
+			\State Switch \textit{atom} meaning
+		\EndIf
+		
+		\If{\textit{atom} is AND}
+			\State add \textit{last} or \textit{newTerm} in conjunction buffer
+		\ElsIf{\textit{atom} is NOT}
+			\State switch \textit{negGlobal} flag
+		\Else\Comment{\textit{atom} is OR}
+			\State add term or buffered conjunction to output
+		\EndIf
+	\Else
+		\State add atom to \textit{termTmp}
+	\EndIf
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
 The normalization algorithm follows the proof in a sense that when it traverses the input left to right, 
 recursively descending into every sub-formula, it first removes the negation\footnote{Removing negation depends on 
 the position of the NOT operator. When it is in front of the parenthesis surrounding a sub-formula it involves 

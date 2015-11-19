@@ -1,9 +1,9 @@
 \chapter{The DatasetManager}
 
 As mentioned before, the DIRAC software architecture is based on a set of distributed,
-collaborating services, following the paradigm of a Services
+collaborating services, following the paradigm of a Service
 Oriented Architecture (SOA). The services themselves consist of
-modules. DatasetManager is one of the modules used by the File Catalog, where others are
+modules. DatasetManager is one of the modules used by the File Catalog, where the other include
 e.g. FileMetadata module, DirectoryTree module etc. 
 
 The dataset is a set of files grouped together based on their common metadata. To accomplish
@@ -12,29 +12,30 @@ satisfying it. Moreover there are two types of datasets: a dynamic dataset and
 a frozen (static) one. A dynamic dataset is exactly what is described above: a set of all the
 files that satisfy a given metaquery. The dynamic dataset changes every time a file satisfying
 its metaquery is added to the file catalog. A frozen dataset is a snapshot of a dynamic dataset. The
-user can freeze a dataset whose files he is using in order to maintain the set of files for
+user can freeze a dataset the files of which he is using in order to maintain the set of files for
 further evaluation or cross-checking the results of his work with other users over the same
 set of files. When a frozen dataset is later deleted, the user is asked whether the files, that 
-are exclusively contained by this dataset shall be deleted. 
+are exclusively contained in this dataset should be deleted. 
 
 \section{Previous Status}
 Before the start of this project, a prototype of the DatasetManager module was already 
-in place. It hinted, what the structure of the database should look like and what is the
-expected behavior of the datasets, but many crucial features (deleting files when a 
-frozen dataset is deleted, dataset replication and overlaping,...) and properties (identifying
+in place. It complied with the demands requiring, what the structure of the database 
+should look like and what is the 
+expected behavior of the datasets, but many crucial features (like e.g. deleting files when a 
+frozen dataset is deleted, dataset replication and overlapping and other) and properties (identifying
 the dataset based on its' location in the directory tree) were missing.
 
 \section{Implementation Details}
 
-The DatasetManager is made to be one of the modules in the file catalog. The class offers
+The DatasetManager is  one of the modules in the file catalog. The class offers
 multiple methods handling the datasets and exposing them to other modules. All the state of the 
 datasets is saved in a database, the class itself holds only an instance of the database interface
 object, so restarting the FileCatalog service is done without any problems. The module handles mainly
 basic CRUD operations with some additions.
 
-\subsection{Releasing and Freezing Dataset}
+\subsection{Releasing and Freezing a Dataset}
 
-When a dataset is created an entry is inserted to the database. It contains the datasets name, id, metaquery, 
+When a dataset is created an entry is inserted to the database. It contains the dataset name, id, metaquery, 
 status, id of the directory it is located in, UID and GID of the user who created it and some other 
 properties. When a dataset is frozen, the query is evaluated and all the files, which the
 dataset contains, are associated with it (the records are inserted in the table \texttt{FC\_MetaDatasetFiles}.
@@ -64,7 +65,7 @@ which prevents memory leaks. The RMS is also used when dataset replication is ex
 
 \subsection{Dataset overlapping}
 
-Another important feature not included in the previous implementation was determining 
+Another important feature not included in the previous implementation was the determination of  
 dataset overlapping. In the first step the metaqueries of the two datasets are combined
 into a conjunction and the check proceeds only if the conjunction is a valid metaquery.
 The procedure of the second step depends on the statuses of the datasets. When the two

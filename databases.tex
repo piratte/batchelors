@@ -208,7 +208,7 @@ integer values were all picked from the interval $[1;1000]$ and the string value
 words from the NATO phonetic alphabet\cite{NATO}, which lead to the easier composition of testing queries. 
 Integer fields represent continuous data types and string fields represent discreet data types.
 
-The data in form of two csv files with lines \texttt{id,metaname,value} were 63 and 59 GB big.
+The data in form of two csv files with lines \texttt{id,metaname,value} were 53 and 59 GB big.
 
 \subsection{Loading the big data}
 
@@ -274,9 +274,9 @@ preparation of the query, nor the printing of the results were counted in the fi
 For Elasticsearch the cache of the index was flushed after every query to keep the results consistent (although as 
 figure \ref{fig:EScache} suggests, flushing the cache does not make a notable difference for bigger data volumes). 
 
-\begin{figure}[t]
+\begin{figure}[h]
 	\centering
-	\input{img/ES_comparison.tex}
+	\input{img/ES_comparison2.tex}
 %	\includegraphics[width=\textwidth]{ES_comparison.pdf}
 	\caption{Query times for Elasticsearch comparing performance with and without dumping depending on number of 
 	hits (logarithmic scale)}
@@ -289,7 +289,7 @@ Storage Engine based on memory mapped files}. There is also a new storage engine
 Moreover the new engine adds the option of choosing the compression strategy, the comparison of disk space usage 
 can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fig:MDBcomparison}.
 
-\begin{table}[]
+\begin{table}[h]
 \centering
 \label{tab:MongoComp}
 \begin{tabular}{|l|r|r|}
@@ -300,15 +300,24 @@ WiredTiger with zlib compression    & 22 788                                   &
 WiredTiger with default compression & 42 249                                   & 616                                   \\ \hline
 \end{tabular}
 \caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not rely on the
-compression used. All sizes are in MB. For comparison the size of the data in Elasticsearch is 59 716MB.}
+compression used. All sizes are in MB.}
 \end{table}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth]{MDB_comparison.pdf}
+	\input{img/MDB_comparison2.tex}
+	%\includegraphics[width=\textwidth]{MDB_comparison.pdf}
 	\caption{Query times for MongoDB comparing performance with different storage engines and compression 
 	options (logarithmic scale)}
 	\label{fig:MDBcomparison}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\input{img/DBs_comparison2.tex}
+	%\includegraphics[width=\textwidth]{DBs_comparison.pdf}
+	\caption{Comparison between Elasticsearch and the best performing MongoDB configuration.}
+	\label{fig:DBscomparison}
 \end{figure}
 
 The conclusion is that if the administrator does not have a critically low amount of disk space available, MongoDB
@@ -316,13 +325,7 @@ works best with the new WiredTiger storage engine with default compression. In f
 can see the comparison of performance on the sample queries between the WiredTiger configuration of MongoDB and 
 Elasticsearch. 
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\textwidth]{DBs_comparison.pdf}
-	\caption{Query times for MongoDB comparing performance with different storage engines and compression 
-	options (logarithmic scale)}
-	\label{fig:DBscomparison}
-\end{figure}
+
 
 The queries on MongoDB are taking much more time than on Elasticsearch. Luckily MongoDB provides
 a tool for explaining query execution which comes in very useful when trying o investigate efficiency problems
@@ -335,20 +338,46 @@ for each query and the performance was tested using these indexes.
 
 %TODO create the indexes, test the queries and post the results
 
+Creating an index for each is not the preferred usage pattern in this case, so the best performing NoSQL database
+according to these test is Elasticsearch.
+
 \subsection{The current deployment performance}
 
 Currently the database back-end to all the services in DIRAC, where a database is needed including the File Catalog
 and its' metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen in figure
 \ref{fig:DFCUML}.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\textwidth]{DFCDB.pdf}
-	\caption{The File Catalog part of the database scheme. The tables on the left are created implicitly with the
-	rest of the scheme, they are used  for keeping track of the types of metafields and un-indexed  metadata 
-	values. For each new indexed field a new table is created, in this scheme there are 3 indexed file metafields
-	(X, Y, Z) and three indexed directory metafields (A,B,C).}
-	\label{fig:DFCUML}
-\end{figure}
+%\begin{figure}[h]
+%	\centering
+%	\includegraphics[width=\textwidth]{DFCDB.pdf}
+%	\caption{The File Catalog part of the database scheme. The tables on the left are created implicitly with the
+%	rest of the scheme, they are used  for keeping track of the types of metafields and un-indexed  metadata 
+%	values. For each new indexed field a new table is created, in this scheme there are 3 indexed file metafields
+%	(X, Y, Z) and three indexed directory metafields (A,B,C).}
+%	\label{fig:DFCUML}
+%\end{figure}
 
-When
+In order to see if it is worth to start using a NoSQL database, this project compared the one that performed 
+the best in the tests with the current deployment. When trying to test the MySQL database against the same queries 
+by only loading the relevant data (creating tables only for 8 integer typed metadata and 3 string ones), the 
+performance was much better than all the NoSQL databases. This was due to the fact, that the MySQL engine loaded
+the whole dataset in memory and did not have to use the disk after that. This however is not the expected 
+behavior, because the database engine most likely will not serve only the DFC metadata catalog, so there will not
+be enough memory space to keep all the metadata in cache. To test how the database could behave, the whole dataset
+was inserted into the database. This also let us to compare the size of data indexed by MySQL to NoSQL (table 
+\ref{tab:allDbSizes}). 
+
+\begin{table}[h]
+\centering
+\label{tab:allDbSizes}
+\begin{tabular}{|l|r|}
+\hline
+Database      & \multicolumn{1}{l|}{Total database size} \\ \hline
+MySQL         & 112                                 \\ \hline %TODO
+MongoDB       & 42 249                                   \\ \hline
+Elasticsearch & 59 715                                   \\ \hline
+\end{tabular}
+\caption{Disk usage comparison all databases. For comparison the size of the input csv files are shown. All sizes 
+are in MB.}
+\end{table}
+
