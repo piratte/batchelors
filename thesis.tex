@@ -29,19 +29,17 @@
 \usepackage[utf8]{inputenc}
 
 %% Ostatní balíčky
+\usepackage{multirow}
+\usepackage{amsthm}
+
 \usepackage{graphicx}
 \usepackage{wrapfig}
-\usepackage{amsthm}
-\usepackage{multirow}
-\usepackage{minted}
 \graphicspath{ {img/} }
 
-%\usepackage{algorithm}
-%\usepackage{algorithmic}
 \usepackage{algorithm,algorithmicx,algpseudocode}
-%\algrenewcommand{\algorithmiccomment}[1]{\hfill$\blacktriangleright$ #1}
+\usepackage{minted}
 
-
+\usepackage[titletoc]{appendix}
 
 %% Balicky pro pekne vytisteni zdrojoveho kodu
 \usepackage{listings}
@@ -290,22 +288,34 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 %%% Použité zkratky v bakalářské práci, existují-li, včetně jejich vysvětlení.
 \chapwithtoc{List of Abbreviations}
 \begin{description}
-	%TODO finish the list
-	\item[LHC]
-	\item[CERN]
-	\item[DNF]
-	\item[WLCG]
-	\item[DFC]
-	\item[LFC]
-	\item[LFN]
-	\item[PFN]
-	\item[SRM]
+	\item[CERN] European Organization for Nuclear Research (name derived from Conseil Européen pour la Recherche 
+	Nucléaire) -- European research organization that operates the largest particle physics laboratory in the 	
+	world.
+	\item[LHC] Large Hadron Collider -- the world's largest and most powerful particle collider built by CERN.
+	\item[WLCG] The Worldwide LHC Computing Grid -- global collaboration of more than 170 computing 
+	centres in 42 countries, linking up national and international grid infrastructures.
+	
+	\item[DNF] Disjunctive Normal Form -- standard form of a logical formula, which is a disjunction of 
+	conjunctive clauses
+
+	\item[DIRAC] The Distributed Infrastructure with Remote Agent Control -- middleware developed by one of the 
+	CERNs' collaborations
+	\item[DFC] DIRAC File Catalog -- file catalog service in the DIRAC middleware 
+	\item[LFC] LCG File Catalog -- file catalog provided by CERN IT department 
+	
+	\item[LFN] Logical File Name -- name of the file displayed to a file catalog user 
+	\item[PFN] Physical File Name -- complete file URL 
+	
+	\item[SRM] Storage Resource Managers -- middleware software modules managing available storage resource 
 \end{description}
 
 %%% Přílohy k bakalářské práci, existují-li (různé dodatky jako výpisy programů,
 %%% diagramy apod.). Každá příloha musí být alespoň jednou odkazována z vlastního
 %%% textu práce. Přílohy se číslují.
-\chapwithtoc{Attachments}
+%\chapwithtoc{Attachments}
+
+\include{AP_queries}
+
 
 \openright
 \end{document}

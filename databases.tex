@@ -23,8 +23,8 @@ range queries.
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.9]{dataTyp.pdf}
 \caption{Theoretical data scheme in the metadata catalog}
+\includegraphics[scale=0.9]{dataTyp.pdf}
 \label{fig:theoDataScheme}
 \end{figure}
 
@@ -61,7 +61,6 @@ file IDs of files having this metaname and value associated with them.
 
 \begin{table}[h]
 \centering
-\label{tab:fileMeta}
 \begin{tabular}{|l|l|l|l|ll}
 \hline
 \multirow{2}{*}{Metaname A} & Value 1      & Value 2      & Value 3      & \multicolumn{1}{l|}{Value 4}      & \multicolumn{1}{l|}{Value 5}      \\ \cline{2-6}
@@ -70,6 +69,7 @@ file IDs of files having this metaname and value associated with them.
                             & \{id,id,..\} & \{id,id,..\} & \{id,id,..\} &                                   &                                   \\ \cline{1-4}
 \end{tabular}
 \caption{File metadata}
+\label{tab:fileMeta}
 \end{table}
 
 The rows are grouped in tables by value type, because the algorithm used to sort the
@@ -97,14 +97,14 @@ suggest, that files satisfying only a part of the metaquery could be many, the i
 Cassandra as the NoSQL database was dropped, because fetching multiple times a large number of 
 files from the database and then doing a intersection in the python code is clearly not optimal. 
 
-\begin{listing}
-\begin{minted}{sql}
-SELECT fileid 
-	FROM file_int 
-	WHERE metaname='metaInt1' AND value>3;
-\end{minted}
-\caption{Example query}
-\end{listing}
+%\begin{listing}
+%\begin{minted}{sql}
+%SELECT fileid 
+%	FROM file_int 
+%	WHERE metaname='metaInt1' AND value>3;
+%\end{minted}
+%\caption{Example query}
+%\end{listing}
 
 \section{Document databases}
 
@@ -117,7 +117,7 @@ and testing and in case of this project is essential because the number of assoc
 files. The metadata are stored in a JSON structure with fields being meta names, indexes above properties and key 
 mapped to the dir or file ID.
 
-\begin{listing}
+
 \begin{minted}{json}
 {
 	'id'       : id
@@ -126,8 +126,7 @@ mapped to the dir or file ID.
 	'metaInt3' : 123
 }
 \end{minted}
-\caption{JSON structure used in document databases}
-\end{listing}
+
 
 Document databases were not the first pick during developing this project, because the idea of
 storing metadata in a JSON structure and then building indexes above the properties is not as
@@ -240,7 +239,6 @@ indexes and their space requirements are listed in table \ref{tab:indexBuildTime
 
 \begin{table}[h]
 \centering
-\label{tab:indexBuildTimes}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
 Field    & Time     & Disk Space (MMAP) & Disk Space (WT) \\ \hline
@@ -258,13 +256,14 @@ testInt8 & 00:19:58 & 211 390           & 46 785          \\ \hline
 \end{tabular}
 \caption{The time and storage requirements for indexes used in MongoDB. The indexes were built while using
 the MMAP storage engine. Sizes are in MB.}
+\label{tab:indexBuildTimes}
 \end{table}
 
 Elasticsearch does not have a similar limitation, however the queries were kept
 the same so that the comparison is as fair as possible. 
 
 The queries were generated randomly combining the integer and string properties. The number of hits was not 
-considered while generating the queries. All the queries used are in appendix A (??)%TODO add queries to an appendix?
+considered while generating the queries. All the queries used are in appendix \ref{app:queries}.
 
 The program testing the performance is a python script running on a personal computer in the same LAN as the 
 database machine (similarly to the expected deployment of the service). The measured time is the interval between 
@@ -291,7 +290,6 @@ can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fi
 
 \begin{table}[h]
 \centering
-\label{tab:MongoComp}
 \begin{tabular}{|l|r|r|}
 \hline
 Storage engine                      & \multicolumn{1}{l|}{Total database size} & \multicolumn{1}{l|}{Total index size} \\ \hline
@@ -301,6 +299,7 @@ WiredTiger with default compression & 42 249                                   &
 \end{tabular}
 \caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not rely on the
 compression used. All sizes are in MB.}
+\label{tab:MongoComp}
 \end{table}
 
 \begin{figure}[h]
@@ -329,17 +328,42 @@ Elasticsearch.
 
 The queries on MongoDB are taking much more time than on Elasticsearch. Luckily MongoDB provides
 a tool for explaining query execution which comes in very useful when trying o investigate efficiency problems
-like this one. When trying to explain the query %TODO insert query
-the output of the command can be seen in listing %TODO add listing and reference
+like this one. When trying to explain a sample query:
+
+\begin{listing}
+\begin{minted}{sql}
+SELECT FileID FROM Metas 
+	WHERE testInt5.Value > 364 
+	AND testStr2.Value='juliet' 
+	AND testInt4.Value > 467;
+\end{minted}
+\caption{SQL equivalent of a sample query used to ilustrate MongoDBs' index usage}
+\end{listing}
+
+\noindent the output of the command can be seen in listing %TODO 
+
+\begin{listing}
+\begin{minted}{json}
+
+\end{minted}
+\caption{MongoDB explaining the query on a random query.}
+\end{listing}
+
 As we can see, MongoDB tries all the indexes associated with one of the queried properties, then picks one and 
 based on just it performs the search. The search results are then filtered so that the returned fields satisfy the
 other conditions of the input query. To test the best possible performance, special compound indexes were created 
 for each query and the performance was tested using these indexes. 
 
-%TODO create the indexes, test the queries and post the results
+\begin{figure}[h]
+	\centering
+	\input{img/MDBcompound.tex}
+	\caption{Comparison between MongoDB with indexes created specially for the tested queries and Elasticsearch.}
+	\label{fig:MDBcompound}
+\end{figure}
 
-Creating an index for each is not the preferred usage pattern in this case, so the best performing NoSQL database
-according to these test is Elasticsearch.
+Creating an index for each is not the preferred usage pattern in this case. Also as figure \ref{fig:MDBcompound} 
+clearly states that even with these special indexes MongoDB shows worse performance than Elasticsearch, although 
+its query times are much better than with simple indexes. 
 
 \subsection{The current deployment performance}
 
@@ -363,21 +387,36 @@ by only loading the relevant data (creating tables only for 8 integer typed meta
 performance was much better than all the NoSQL databases. This was due to the fact, that the MySQL engine loaded
 the whole dataset in memory and did not have to use the disk after that. This however is not the expected 
 behavior, because the database engine most likely will not serve only the DFC metadata catalog, so there will not
-be enough memory space to keep all the metadata in cache. To test how the database could behave, the whole dataset
+be enough memory space to keep all the metadata in cache. To test how the database could behave in production, the 
+command \texttt{flush tables;} was used after every query to dump the cached tables. Also the whole dataset
 was inserted into the database. This also let us to compare the size of data indexed by MySQL to NoSQL (table 
 \ref{tab:allDbSizes}). 
 
 \begin{table}[h]
 \centering
-\label{tab:allDbSizes}
 \begin{tabular}{|l|r|}
 \hline
 Database      & \multicolumn{1}{l|}{Total database size} \\ \hline
-MySQL         & 112                                 \\ \hline %TODO
 MongoDB       & 42 249                                   \\ \hline
 Elasticsearch & 59 715                                   \\ \hline
+csv files     & 113 384                                  \\ \hline
+MySQL         & 185 135                                  \\ \hline
 \end{tabular}
 \caption{Disk usage comparison all databases. For comparison the size of the input csv files are shown. All sizes 
 are in MB.}
+\label{tab:allDbSizes}
 \end{table}
+
+To test the databases more thoroughly a new set of queries was created. These queries consult more than just the 
+small set of metafields indexed by the MongoDB. The MySQL on this set proved itself better on queries consulting
+a lesser number of metafields and a larger number of hits. Elasticsearchs' performance seems to be proportionate
+to the number of hits and the complexity of the query does not seem to have an effect on its speed (results in 
+figure \ref{fig:wide}).
+
+\begin{figure}[h]
+	\centering
+	\input{img/ES_MySQL_wide.tex}
+	\caption{Comparison between MongoDB with indexes created specially for the tested queries and Elasticsearch.}
+	\label{fig:wide}
+\end{figure}
 
