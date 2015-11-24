@@ -1,0 +1,23 @@
+\chapter{MongoDB explain index} \label{app:MDB}
+
+This appendix lists output of the \texttt{db.collection.explain.find()} command applied to 
+one of the queries from the testing set. The rewriting of that query can be seen the first listing, the output
+in the second one. 
+
+\begin{minted}{sql}
+SELECT FileID FROM Metas 
+	WHERE testInt5.Value > 364 
+	AND testStr2.Value='juliet' 
+	AND testInt4.Value > 467;
+\end{minted}
+
+In the beginning the query planner writes some basic information about the search (the names \texttt{namespace},
+\texttt{parsedQuery}, etc.). Then the details of the query plan selected by the optimizer are listed in name
+\texttt{winningPlan}. The stage \texttt{FETCH} describes retrieving documents, in this particular case the documents
+are filtered so that the constraints that are minor according to the query planer are fulfilled. Then in the next
+stage \texttt{IXSCAN} the index is scanned. In this case the index over the property \texttt{testStr2} was chosen.
+After the winning plan, two more rejected plans are described. These plans differ from the winning one by using a 
+different index. In the end some information about the current server was printed by the command, but was not
+included here because it has no relevance for this problem.
+
+\input{MDBexplainquery.tex}

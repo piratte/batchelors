@@ -1,0 +1,151 @@
+\chapter{Queries} \label{app:queries}
+
+This attachment lists the set of queries, which was used to get a basic benchmark of the databases performance.
+The queries are written in JSON form for convinience: a one level JSON is essentially a serialized form of the 
+python dictionary data structure. When creating a meaningful query from the JSON the following algorithm is used:
+
+\begin{itemize}
+	\item If the current key contains the substring \texttt{Int}, then according to the projects' 
+		conventions the field represents an integer typed metafield. The query condition in this case is 
+		\texttt{[key] > [value]}.
+	\item Otherwise (key contains substring \texttt{Str}) the field represents a string metafield adn the condition
+		is \texttt{[key] = [value]}	
+\end{itemize}
+
+
+\begin{minted}{json}
+
+{'testInt2': 844, 'testInt8': 406}
+
+{'testInt2': 125, 'testInt7': 101}
+
+{'testInt5': 270, 'testInt6': 267}
+
+{'testInt1': 154, 'testInt2': 69, 'testInt7': 305}
+
+{'testInt2': 260, 'testInt4': 731, 'testInt5': 873}
+
+{'testInt1': 185, 'testInt5': 389, 'testInt7': 561}
+
+{'testInt2': 19,
+ 'testInt3': 745,
+ 'testInt5': 600,
+ 'testInt7': 321}
+
+{'testInt1': 330,
+ 'testInt2': 168,
+ 'testInt3': 477,
+ 'testInt7': 515}
+
+{'testInt2': 809,
+ 'testInt4': 339,
+ 'testInt7': 848,
+ 'testInt8': 562}
+
+{'testInt5': 593, 'testStr1': 'foxtrot'}
+
+{'testInt2': 258, 'testStr2': 'yankee'}
+
+{'testInt6': 805, 'testStr3': 'tango'}
+
+{'testInt4': 467, 'testInt5': 364, 'testStr2': 'juliet'}
+
+{'testInt5': 85, 'testInt8': 385, 'testStr1': 'juliet'}
+
+{'testInt3': 506, 'testInt5': 840, 'testStr2': 'victor'}
+
+{'testInt2': 645,
+ 'testInt4': 57,
+ 'testInt5': 309,
+ 'testStr2': 'kilo'}
+
+{'testInt1': 794,
+ 'testInt4': 190,
+ 'testInt8': 663,
+ 'testStr3': 'juliet'}
+
+{'testInt2': 621,
+ 'testInt4': 495,
+ 'testInt8': 558,
+ 'testStr3': 'whiskey'}
+
+{'testInt1': 833,
+ 'testInt6': 807,
+ 'testInt7': 336,
+ 'testInt8': 58,
+ 'testStr3': 'sierra'}
+
+{'testInt3': 943,
+ 'testInt5': 292,
+ 'testInt6': 762,
+ 'testInt7': 160,
+ 'testStr1': 'charlie'}
+
+{'testInt5': 339,
+ 'testInt6': 918,
+ 'testInt7': 752,
+ 'testInt8': 789,
+ 'testStr3': 'mike'}
+
+{'testInt8': 157, 'testStr1': 'kilo', 'testStr2': 'hotel'}
+
+{'testInt6': 347, 'testStr1': 'papa', 'testStr2': 'india'}
+
+{'testInt3': 109, 'testStr1': 'victor', 'testStr3': 'juliet'}
+
+{'testInt5': 240,
+ 'testInt6': 578,
+ 'testStr1': 'delta',
+ 'testStr3': 'golf'}
+
+{'testInt3': 131,
+ 'testInt4': 160,
+ 'testStr1': 'kilo',
+ 'testStr2': 'tango'}
+
+{'testInt3': 487,
+ 'testInt8': 856,
+ 'testStr1': 'charlie',
+ 'testStr3': 'whiskey'}
+
+{'testInt4': 443,
+ 'testInt5': 103,
+ 'testInt7': 540,
+ 'testStr2': 'india',
+ 'testStr3': 'golf'}
+
+{'testInt3': 303,
+ 'testInt7': 200,
+ 'testInt8': 866,
+ 'testStr1': 'foxtrot',
+ 'testStr3': 'golf'}
+
+{'testInt1': 532,
+ 'testInt4': 371,
+ 'testInt6': 155,
+ 'testStr2': 'india',
+ 'testStr3': 'yankee'}
+
+{'testInt1': 479,
+ 'testInt2': 432,
+ 'testInt3': 915,
+ 'testInt8': 33,
+ 'testStr1': 'quebec',
+ 'testStr2': 'alpha'}
+
+{'testInt1': 826,
+ 'testInt4': 802,
+ 'testInt5': 824,
+ 'testInt8': 874,
+ 'testStr1': 'juliet',
+ 'testStr2': 'golf'}
+
+{'testInt2': 604,
+ 'testInt4': 791,
+ 'testInt5': 354,
+ 'testInt6': 668,
+ 'testStr1': 'juliet',
+ 'testStr2': 'xray'}
+
+\end{minted}
+%\caption{bla}
