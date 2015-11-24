@@ -1,0 +1,124 @@
+\begin{minted}{json}
+{
+  "queryPlanner": {
+    "plannerVersion": 1,
+    "namespace": "fcall.files",
+    "indexFilterSet": false,
+    "parsedQuery": {
+      "$and": [
+        {
+          "testStr2": {
+            "$eq": "juliet"
+          }
+        },
+        {
+          "testInt4": {
+            "$gt": 467
+          }
+        },
+        {
+          "testInt5": {
+            "$gt": 364
+          }
+        }
+      ]
+    },
+    "winningPlan": {
+      "stage": "FETCH",
+      "filter": {
+        "$and": [
+          {
+            "testInt4": {
+              "$gt": 467
+            }
+          },
+          {
+            "testInt5": {
+              "$gt": 364
+            }
+          }
+        ]
+      },
+      "inputStage": {
+        "stage": "IXSCAN",
+        "keyPattern": {
+          "testStr2": 1
+        },
+        "indexName": "testStr2_1",
+        "isMultiKey": false,
+        "direction": "forward",
+        "indexBounds": {
+          "testStr2": [
+            "[\"juliet\", \"juliet\"]"
+          ]
+        }
+      }
+    },
+    "rejectedPlans": [
+      {
+        "stage": "FETCH",
+        "filter": {
+          "$and": [
+            {
+              "testStr2": {
+                "$eq": "juliet"
+              }
+            },
+            {
+              "testInt4": {
+                "$gt": 467
+              }
+            }
+          ]
+        },
+        "inputStage": {
+          "stage": "IXSCAN",
+          "keyPattern": {
+            "testInt5": 1
+          },
+          "indexName": "testInt5_1",
+          "isMultiKey": false,
+          "direction": "forward",
+          "indexBounds": {
+            "testInt5": [
+              "(364.0, inf.0]"
+            ]
+          }
+        }
+      },
+      {
+        "stage": "FETCH",
+        "filter": {
+          "$and": [
+            {
+              "testStr2": {
+                "$eq": "juliet"
+              }
+            },
+            {
+              "testInt5": {
+                "$gt": 364
+              }
+            }
+          ]
+        },
+        "inputStage": {
+          "stage": "IXSCAN",
+          "keyPattern": {
+            "testInt4": 1
+          },
+          "indexName": "testInt4_1",
+          "isMultiKey": false,
+          "direction": "forward",
+          "indexBounds": {
+            "testInt4": [
+              "(467.0, inf.0]"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "ok": 1
+}
+\end{minted}
