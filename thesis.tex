@@ -39,7 +39,7 @@
 \usepackage{algorithm,algorithmicx,algpseudocode}
 \usepackage{minted}
 
-\usepackage[titletoc]{appendix}
+\usepackage[toc,title,header]{appendix}
 
 %% Balicky pro pekne vytisteni zdrojoveho kodu
 \usepackage{listings}
@@ -59,6 +59,9 @@
     frame=none,
     backgroundcolor=\color{background},
 }
+
+% Nastavení číslování i pro subsubsection
+\setcounter{secnumdepth}{4}
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
@@ -270,11 +273,6 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 \include{databases}
 \include{nosql_metadata_catalog}
 \include{usage}
-
-
-% Ukázka použití některých konstrukcí LateXu (odkomentujte, chcete-li)
-% \include{example}
-
 \include{epilog}
 
 %%% Seznam použité literatury
@@ -306,6 +304,8 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 	\item[LFN] Logical File Name -- name of the file displayed to a file catalog user 
 	\item[PFN] Physical File Name -- complete file URL 
 	
+	\item[CQL] Cassandra Query Language -- the primary language for communicating with the Cassandra database
+	
 	\item[SRM] Storage Resource Managers -- middleware software modules managing available storage resource 
 \end{description}
 
@@ -314,8 +314,12 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 %%% textu práce. Přílohy se číslují.
 %\chapwithtoc{Attachments}
 
+\begin{appendix}
+\renewcommand{\chaptermark}[1]{\markboth{Appendix \thechapter \hspace{0.1mm}\ #1}{}}
+\addappheadtotoc
 \include{AP_queries}
-
+\include{AP_MDBExplain}
+\end{appendix}
 
 \openright
 \end{document}
