@@ -92,7 +92,7 @@ calls a private method for optimization.
 \begin{algorithmic}[1]
 \Procedure{ToDnf}{inputList}
 \State \textit{termTmp} = [ ]; \textit{last} = [ ]
-\ForAll{\textit{atoms} in \textit{inputList}} 
+\ForAll{\textit{atoms} in \textit{inputList}}
 	\If{\textit{atom} is '$($'}  
 		\State Find correct '$)$'
 		\State \textit{last} $\leftarrow$ ToDNF(sub-list between parentheses)
