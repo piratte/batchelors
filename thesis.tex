@@ -171,10 +171,12 @@ I would like to thank my supervisor, doc. RNDr. Irena Holubová, Ph.D., for pati
 writing this thesis. 
 
 I would also want to thank Dr. Andrei Tsaregorodtsev, the DIRAC product manager for finding me a suitable
-task I could work on during my thesis and RNDr. Jiří Chudoba, Ph.D. for providing me with a suitable testing
+task I could work on during my thesis and to continuous encouragement and help during my work. 
+Further, I thank RNDr. Jiří Chudoba, Ph.D. for providing me with a suitable testing
 environment in the computing center of the Institute of Physics of the Czech Academy of Sciences.
 
-Finally my thanks belong to my family and my girlfriend Annie.
+Finally my thanks belong to my parents for helping me enhance the text of this thesis and last but not least my 
+girlfriend Annie for her great patience and support.
 
 \newpage
 
@@ -226,12 +228,12 @@ doc. RNDr. Irena Holubová, Ph.D.
 
 Abstrakt:
 V této práci je rozšířen DIRAC File Catalog (DFC) o modul DatasetManager přidávající funkcionalitu datasetů 
-definovaných dotazem nad metadaty. K vylepšení práce s dotazy v kódu systému, nová třída MetaQuery je vyvinuta,
+definovaných dotazem nad metadaty. K vylepšení práce s dotazy v kódu systému, je vyvinuta nová třída MetaQuery,
 která shlukuje obslužné metody a přidává normalizaci a optimalizaci dotazu na vstupu. Jazyk vyjadřující 
 dotazy byl také rozšířen přidáním možnosti používat logické spojky a závorky. 
 
 Druhá část práce se zabývá testováním hypotézy, že použití NoSQL databáze jako back-end pro metadatovou část
-DFC by přineslo vylepšením výkonu vyhledávání. Několik NoSQL databází je otestováno na datech podobných 
+DFC by přineslo vylepšení výkonu vyhledávání. Několik NoSQL databází je otestováno na datech podobných 
 produkčním datům používaných systémem DIRAC. Nejvýkonější databáze na základě testů je pak připojena k DFC 
 použitím nového specializovaného rozhraní.
 
@@ -264,9 +266,9 @@ for datasets based on metadata queries. To improve the metaquery handling in the
 was implemented, which bundles the handling methods as well as adds normalization and optimization of the user 
 input. Also the metaquery language was extended enabling logical operators and parenthesis. 
 
-In the second part of the thesis the hypothesis that connecting the metadata part of the DIRAC File Catalog
-could improve metaquery performance is evaluated. Several NoSQL databases are tested and the best performing
-is then connected using a interface module to the DFC.
+In the second part of the thesis the hypothesis that connecting the metadata part of the DIRAC File Catalog to a 
+NoSQL database could improve metaquery performance is evaluated. Several databases are tested and the best 
+performing is then connected using an interface module to the DFC.
 
 Keywords:
 System DIRAC, NoSQL databases, efficient processing of data files, metadata querying
