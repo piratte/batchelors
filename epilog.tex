@@ -1,2 +1,18 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
+
+This project successfully added dataset support to the DIRAC File Catalog making DIRAC even more 
+versatile. Closely coupled with the dataset functionality went the development of the new MetaQuery
+class that extended the metaquery language by adding more logical operators. The new MetaQuery also
+supports normalization and optimization of the query input opening new possibilities for future usage
+in the DIRAC Data Management system as well as the Workflow Management system. 
+
+This project also tackled the problem of storing metadata. To solve it a couple of NoSQL databases were tested
+on sample data similar to what DIRAC production metadata. The tests proved that connecting the 
+metadata part of DFC to a NoSQL database could improve query performance, especially on more complex
+queries. 
+
+To prove the concept of connecting a NoSQL database to DIRAC a new module was developed to provide 
+a interface between DFC and the database. As the back-end database Elasticsearch, the database performing 
+best in the conducted tests was used. This conveniently moved the complexity from query execution to the database 
+and matadata management.
