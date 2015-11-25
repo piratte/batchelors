@@ -2,51 +2,64 @@
 \addcontentsline{toc}{chapter}{Introduction}
 
 \section*{The Worldwide LHC Computing Grid}
-On the edge of our millenium scientists working on the Large Hadron Collider (LHC) were expecting enormous volumes of data, larger then any single computing centre within the LHC collaboration could handle, so the concept of distributed data management was concieved. In 2001 the CERN Council approved the start of an international collaborative project that consists of a grid-based computer network infrastructure, the Worldwide LHC Computing Grid \cite{happyBday}. 
+On the edge of our millenium scientists working on the Large Hadron Collider (LHC) were expecting enormous volumes 
+of data, larger then any single computing centre within the LHC collaboration could handle, so the concept of 
+distributed data management was concieved. In 2001 the CERN Council approved the start of an international 
+collaborative project that consists of a grid-based computer network infrastructure, the Worldwide LHC Computing 
+Grid (WLCG) \cite{happyBday}. 
 
-The WLCG has a hierarchical architecture, where participating sites are categorized according to the resources and services they provide into 4 importance levels called Tiers. Each Tier is represented by a single or distributed computing and storage cluster and provides a specic set of services. The largest centre, CERN data centre or Tier-0, provides the  permanent storage of experimental data and makes the data available for the WLCG processing. Although it provides less than 20\% of the WLCG computing capacity, the role of CERN is unique in keeping one copy of the data from all experiments and for performing the first pass of the data reconstruction. When LHC is not running, Tier-0 provides resources for re-processing of the raw experimental data and eventually for simulation campaigns. The data centre accepts a copy of raw data and stores it localy in CERN, another copy is passed to some Tier-1 center. Tier-1's are huge computing centers located in Europe, Canada, USA and Taipei. They provide non-stop support for the Grid, store a share of raw data, perform reprocessing and store its output. They are connetced to CERN with dedicated high-bandwidth optical-fibre links. Then there are more than 150 Tier-2 centers all around the world. Their role is mainly to run simulation campaigns and end-user analysis. Tier-3 centers are small local computing clusters at universities or research institutes and even individual PCs \cite{TGrid}.
+The WLCG has a hierarchical architecture, where participating sites are categorized according to the resources and 
+services they provide into four importance levels called Tiers. Each Tier is represented by a single or distributed 
+computing and storage cluster and provides a specic set of services. The largest centre, CERN data centre or Tier-0, 
+provides the  permanent storage of experimental data and makes the data available for the WLCG processing. Although 
+it provides less than 20\% of the WLCG computing capacity, the role of CERN is unique in keeping one copy of the 
+data from all experiments and for performing the first pass of the data reconstruction. When LHC is not running, 
+Tier-0 provides resources for re-processing of the raw experimental data and eventually for simulation campaigns. 
+
+Another copy is passed to some Tier-1 
+center. Tier-1's are huge computing centers located in Europe, Canada, USA and Taipei. They provide non-stop support 
+for the Grid, store a share of raw data, perform reprocessing and store its output. They are connetced to CERN with 
+dedicated high-bandwidth optical-fibre links. Then there are more than 160 Tier-2 centers all around the world. 
+Their role is mainly to run simulation campaigns and end-user analysis. Tier-3 centers are small local computing 
+clusters at universities or research institutes and even individual PCs \cite{TGrid}.
+
+%\begin{wrapfigure}{R}{0.5\textwidth}
+%\centering
+%\includegraphics[width=0.45\textwidth]{WLCG-Tiers.png}
+%\caption{The WLCG Tier-1 centers with CERN Tier-0 in the middle}
+%\label{fig:WLCG}
+%\end{wrapfigure}
 
 \section*{Grid Middleware}
-The operation and functionality of WLCG, as well as other Grid systems, is enabled by specific software packages and protocols, so called Grid middleware. This manages the basic domains of the Grid functions: job management, data management, security and information services \cite{GriCom}. The term middleware reflects the specific role of this software packages and protocols system: it is a layer between  the application area for solving users tasks and the ressource area consisting of basic fabric and connectivity layer. 
 
-The vast variety of requirements and needs of the user communities from the four LHC experiments is impossible to meet with only one set of middleware components. Consequently, each experiment user group started developing its own set of tools, which meet their needs. For example AliEn is a middleware solution made by the ALICE experiment collaboration and DIRAC was developed for the LHCb collaboration. Along with some packages from the WLCG-middleware they include some additional specific packages and provide complete framework for data processing according to the individual experiments' computing models.
+The operation and functionality of WLCG, as well as other Grid systems, is enabled by specific software packages and 
+protocols, so-called Grid middleware. This manages the basic domains of the Grid functions: job management, data 
+management, security and information services \cite{GriCom}. The term middleware reflects the specific role of this 
+software packages and protocols system: it is a layer between the application area for solving users tasks and the 
+resource area consisting of basic fabric and connectivity layer. 
 
-% Replace with something else??
-%\section*{Workcycle}
-%A WLCG user can process or analyze data sets of his/her interest on the Grid using some kind of User Interface \cite{UI}. Although the specific features of  UIs may differ for various user groups, the schéma is usually as follows:
-%\begin{itemize}
-%%
-%\item As the first step, the user creates a file containing information about the job he/she wants to run: the name of executable file, input data, software packages needed for the processing, resources requirements (e.g. size of virtual memory neded, estimated time for the completion of the job and so on). The file syntax is called Job Description Language. % \cite{JDL}.
-%%
-%\item This file is submitted via the UI.
-%%
-%\item  The job descriton file is registered in a central queue or database and is evaluated by some kind of Workload Management (WMS) or Job Broker system. % \cite{WMS}
-%%
-%\item Based on the WMS evaluation, the user job is sent  to a concrete computing site, and after waiting in a local batch queue, the execution is started.
-%%
-%\item When the job finishes, the output files get registered in an appropriate file catalogue and stored on an available storage server on the Grid.
-%%
-%\item The user can check the status of his job using the tools provided by the UI. Also via the UI, the user can copy the output files of the job to his/her local machine. 
-%%
-%\end{itemize}
-%The jobs submtted via the Grid UI can not be processed in an interactive mode.
+The vast variety of requirements and needs of the user communities from the four LHC experiments is impossible to 
+meet with only one set of middleware components. Consequently, each experiment user group started developing its own 
+set of tools, which meet their needs. For example AliEn is a middleware solution made by the ALICE experiment 
+collaboration and DIRAC was developed by the LHCb collaboration. Along with some packages from the WLCG-middleware 
+they include some additional specific packages and provide complete framework for data processing according to the 
+individual experiments' computing models.
 
-\section*{DIRAC}
-The Distributed Infrastructure with Remote Agent Control (DIRAC) is a software solution developed for the LHCb experiment. However, the experiments specific features are included as isolated plugins and modules making the whole system more universal \cite{Dir1}.
+\section*{Task of the Thesis}
 
-\section*{DIRAC File Catalog}
-!! quick introduction to the file catalog
 
-\section*{Task}
-The task of this project is to add dataset support to the DIRAC DMS. Once the dataset features will 
-be implemented in DIRAC, it will have all the functionality
-to satisfy the needs of the Auger experiment computing model, so Auger will start using
-DIRAC as it’s middleware software solution.
 
-\section*{Definitions}
-\begin{description}
-\item[Dataset] is a set of files with some common features (files returned by a particular metadata query). In our context, we have frozen and dynamic datasets.
-\item[Dynamic dataset] is a set of files, where the files are not bound to the dataset in any way. Thus, when someone removes, changes or deletes a file, the dataset changes without giving any further notice.
-\item[Frozen dataset] is a set of files, which are fixed and cannot be changed, unless the dataset is released (melted).
-\item[Metadata] is the information describing the user data in order to easily select the file sets of interest for user applications.
-\end{description}
+\section*{Structure of the Thesis}
+
+First of all the DIRAC middleware will be introduced with focus on the data management part and the file
+catalog. Afterwards DIRAC will be compared to two other middleware solutions, more specifically ATLAS Distributed 
+Data Management system and ALICE Environment framework.
+
+In the next two chapters the contribution of this project to DIRACs code will be presented. Chapter three is about
+the new MetaQuery class and chapter four talks about the Dataset Manager.
+
+In the last part several NoSQL databases are tested in order to pick the one that would be the best for storing
+file metadata and in chapter six a module created for integrating that database is described. 
+
+Finally chapter seven provides user documentation to all the commands used to interact with the CLI of the DFC
+used to control any of the parts that were changed by this project. Chapter eight then provides the conclusion.

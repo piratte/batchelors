@@ -39,7 +39,7 @@ key-value pair. Adding that Cassandra features
 its own query language CQL (Cassandra Query Language) which resembles the standard SQL 
 used by all relational databases, it looks like a perfect candidate for the metadata catalog.
 
-\subsection{Developing a data model for Cassandra}
+\subsection{Developing a Data Model for Cassandra}
 
 Although CQL makes it look like a relational database, the developer has to bare in mind, that
 Cassandra is different. The first scheme used the altering number of columns and organized the 
@@ -108,7 +108,8 @@ files from the database and then doing a intersection in the python code is clea
 %\caption{Example query}
 %\end{listing}
 
-\section{Document databases}
+
+\section{Document Databases}
 
 Both following databases are document-oriented and the data scheme is fairly similar in both
 of them. A document-oriented database replaces the concept of a \textit{row} from the world of relational 
@@ -196,7 +197,7 @@ first inserted document using its default configuration.
 
 % When a value of a field is set to a non-numeric value, a numeric_range query cannot be executed after that, even though all the currently set values are numeric
 
-\section{Database tests}
+\section{Database Tests}
 
 For testing, a single IBM iDataPlex dx340 server was used, equipped with 2x (Intel Xeon 5440 with 4 cores), 16GB
 of RAM and 300GB SAS hard drive, where all the database files were stored. After several smaller datasets, 
@@ -212,7 +213,7 @@ Integer fields represent continuous data types and string fields represent discr
 
 The data in form of two csv files with lines \texttt{id,metaname,value} were 53 and 59 GB big.
 
-\subsection{Loading the big data}
+\subsection{Loading the Big Data}
 
 Both databases feature bulk loading functionality. Although the user will not probably use it, in
 this project that involved testing the databases on a large data the loading of the them was one 
@@ -228,7 +229,7 @@ loaded, they could be backed up using the utility \texttt{mongodump} and then ag
 command \texttt{mongorestore}. These two utilities ran without problems and were used when changing the 
 storage engine.
 
-\subsection{Testing query performance on a predefined sample}
+\subsection{Testing Query Performance on a Predefined Sample}
 
 The task of the database in this deployment will be to accept a query, execute the search and return all the 
 ids of documents\footnote{Document ids are mapped on file ids, so this procedure is returning the ids of files
@@ -309,7 +310,8 @@ compression used. All sizes are in MB.}
 	\input{img/MDB_comparison2.tex}
 	%\includegraphics[width=\textwidth]{MDB_comparison.pdf}
 	\caption{Query times for MongoDB comparing performance with different storage engines and compression 
-	options (logarithmic scale)}
+	options: the old MMAPv1 (MDB), the newly available WiredTiger (MDB WT) and WiredTiger with extra compression 
+	(MDB WT zlib). Logarithmic scale.}
 	\label{fig:MDBcomparison}
 \end{figure}
 
@@ -322,7 +324,7 @@ Elasticsearch.
 	\centering
 	\input{img/DBs_comparison2.tex}
 	%\includegraphics[width=\textwidth]{DBs_comparison.pdf}
-	\caption{Comparison between Elasticsearch and the best performing MongoDB configuration.}
+	\caption{Comparison between Elasticsearch (ES) and the best performing MongoDB (MDB WT) configuration.}
 	\label{fig:DBscomparison}
 \end{figure}
 
@@ -337,7 +339,9 @@ indexes were created for each query and the performance was tested using these i
 \begin{figure}[h]
 	\centering
 	\input{img/MDBcompound.tex}
-	\caption{Comparison between MongoDB with indexes created specially for the tested queries and Elasticsearch.}
+	\caption{Comparison between MongoDB with indexes created specially for the tested queries (MDB comp) and 
+	Elasticsearch. To show the improvement the MongoDB performance without the compound indexes is graphed as well
+	(MDB WT)}
 	\label{fig:MDBcompound}
 \end{figure}
 
@@ -345,21 +349,21 @@ Creating an index for each query is not the preferred usage pattern in this case
 \ref{fig:MDBcompound} clearly states that even with these specialized indexes MongoDB shows worse performance 
 than Elasticsearch, although there is a great improvement when compared to the version without the new indexes.  
 
-\subsection{The current deployment performance}
+\subsection{The comparison between NoSQL and the Current Deployment}
 
 Currently the database back-end to all the services in DIRAC, where a database is needed including the File Catalog
 and its metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen in figure
 \ref{fig:DFCUML}.
 
-%\begin{figure}[h]
-%	\centering
-%	\includegraphics[width=\textwidth]{DFCDB.pdf}
-%	\caption{The File Catalog part of the database scheme. The tables on the left are created implicitly with the
-%	rest of the scheme, they are used  for keeping track of the types of metafields and un-indexed  metadata 
-%	values. For each new indexed field a new table is created, in this scheme there are 3 indexed file metafields
-%	(X, Y, Z) and three indexed directory metafields (A,B,C).}
-%	\label{fig:DFCUML}
-%\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{DFCDB.pdf}
+	\caption{The File Catalog part of the database scheme. The tables on the left are created implicitly with the
+	rest of the scheme, they are used  for keeping track of the types of metafields and un-indexed  metadata 
+	values. For each new indexed field a new table is created, in this scheme there are 3 indexed file metafields
+	(X, Y, Z) and three indexed directory metafields (A,B,C).}
+	\label{fig:DFCUML}
+\end{figure}
 
 In order to see if it is worth to start using a NoSQL database, this project compared the one that performed 
 the best in the tests with the current deployment. When trying to test the MySQL database against the same queries 
@@ -396,7 +400,7 @@ figure \ref{fig:wide}).
 \begin{figure}[h]
 	\centering
 	\input{img/ES_MySQL_wide.tex}
-	\caption{Comparison between MongoDB with indexes created specially for the tested queries and Elasticsearch.}
+	\caption{Comparison between Elasticsearch (ES) and the now deployed MySQL on a larger set of queries.}
 	\label{fig:wide}
 \end{figure}
 

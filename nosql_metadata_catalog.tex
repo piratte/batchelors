@@ -71,4 +71,11 @@ removing a metadata from a directory that has lots of files in its sub-tree is a
 be executed as rarely as possible. Updating and setting new metadata can be done by a simple command.
 
 For searching the metadata managing modules from the file catalog had to be changed. The new algorithm simply 
-converts the query to the correct format, submits it and reads the result. 
+converts the query to the correct format, submits it and reads the result.
+
+More functionality can be added using Elasticsearch specific features. For example when a query is executed, the 
+number of documents satisfying it is returned before all the documents are fetched. This could be used when only 
+the number of the files is needed, not the actual results. Also new comparison operators translating to one of 
+Elasticsearch query 
+types\footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html}} can be 
+added to extend the metaquery language.
