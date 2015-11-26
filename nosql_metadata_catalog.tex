@@ -1,4 +1,5 @@
 \chapter{NoSQL Integration into DFC}
+\label{chap:NoSQL}
 
 To prove the concept of connecting the metadata part of the DIRAC File Catalog to a NoSQL database the 
 modules \texttt{fmeta} and \texttt{dmeta} that manage the the metadata in the FileCatalog service were modified.
@@ -72,10 +73,3 @@ be executed as rarely as possible. Updating and setting new metadata can be done
 
 For searching the metadata managing modules from the file catalog had to be changed. The new algorithm simply 
 converts the query to the correct format, submits it and reads the result.
-
-More functionality can be added using Elasticsearch specific features. For example when a query is executed, the 
-number of documents satisfying it is returned before all the documents are fetched. This could be used when only 
-the number of the files is needed, not the actual results. Also new comparison operators translating to one of 
-Elasticsearch query 
-types\footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html}} can be 
-added to extend the metaquery language.

@@ -1,4 +1,6 @@
 \chapter{Users documentation}
+\label{chap:user}
+
 To start working with with DIRAC 
 (or the Grid in general), the user should join some 
 grid Virtual Organization and obtain a Grid Certificate. 
@@ -167,6 +169,8 @@ Check if the two datasets have the same files. The metaqueries are
 checked first so that when there can not be files satisfying both,
 the check does not compare lists of files.
 
+\pagebreak
+
 \subsection{release}
 
 Usage: \texttt{dataset release <dataset\_name>}
@@ -207,6 +211,15 @@ option is used, other data about the datasets are printed as well.
 When a \texttt{<dataset\_name>} is provided, the command restricts
 itself to this dataset.
 
+\subsection{update}
+
+Usage: \texttt{dataset update <dataset\_name> [<dataset\_name>]*}
+
+Update the cached parameters for a dataset or for a space
+separated list of datasets.
+
+\pagebreak
+
 \subsection{status}
 
 Usage: \texttt{dataset status <dataset\_name> [<dataset\_name>]*}
@@ -236,9 +249,3 @@ testDataset:
  14 DatasetID        71
 \end{lstlisting}
 
-\subsection{update}
-
-Usage: \texttt{dataset update <dataset\_name> [<dataset\_name>]*}
-
-Update the cached parameters for a dataset or for a space
-separated list of datasets.

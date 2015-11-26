@@ -1,4 +1,5 @@
 \chapter{The DatasetManager}
+\label{chap:Dataset}
 
 As mentioned before, the DIRAC software architecture is based on a set of distributed,
 collaborating services, following the paradigm of a Service
@@ -45,7 +46,7 @@ When deleting a dataset its record in the database is removed. Moreover when the
 it is requested it would be deleted with the files it contains not including files contained by another frozen
 dataset. This is done using one select
 
-\begin{lstlisting}[language=sql]
+\begin{minted}{sql}
 SELECT FileID 
 FROM FC_MetaDatasetFiles 
 WHERE FileID IN (
@@ -55,7 +56,7 @@ WHERE FileID IN (
 ) 
 GROUP BY FileID 
 HAVING Count(*)=1;
-\end{lstlisting}
+\end{minted}
 
 \noindent where in place of the \texttt{X} symbol the id of the deleted dataset is inserted. The user is then 
 asked, whether he wants to really delete those files from the file catalog. When he agrees, a request to

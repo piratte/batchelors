@@ -23,9 +23,9 @@ range queries.
 
 \begin{figure}[h]
 \centering
-\caption{Theoretical data scheme in the metadata catalog}
 \includegraphics[scale=0.9]{dataTyp.pdf}
 \label{fig:theoDataScheme}
+\caption{Theoretical data scheme in the metadata catalog}
 \end{figure}
 
 
@@ -263,7 +263,7 @@ the MMAP storage engine. Sizes are in MB.}
 \end{table}
 
 Elasticsearch does not have a similar limitation, however the queries were kept
-the same so that the comparison is is as correct as possible.
+the same so that the comparison is as correct as possible.
 
 The queries were generated randomly combining the integer and string properties. The number of hits was not 
 considered while generating the queries. All the queries used can be seen in appendix \ref{app:queries}.
@@ -288,7 +288,7 @@ figure \ref{fig:EScache} suggests, flushing the cache does not make a notable di
 The original MongoDB instance was using the default storage engine used by versions up to 3.0\footnote{MMAPv1 
 Storage Engine based on memory mapped files}. There is also a new storage engine WiredTiger\footnote{
 \url{https://docs.mongodb.org/manual/core/wiredtiger/}} available and their performances were compared.
-Moreover the new engine adds the option of choosing the compression strategy, the comparison of disk space usage 
+Moreover the new engine brings the option of choosing the compression strategy. The comparison of disk space usage 
 can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fig:MDBcomparison}.
 
 \begin{table}[h]
@@ -300,7 +300,7 @@ MMAPv1                              & 136 161                                  &
 WiredTiger with zlib compression    & 22 788                                   & 615                                   \\ \hline
 WiredTiger with default compression & 42 249                                   & 616                                   \\ \hline
 \end{tabular}
-\caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not rely on the
+\caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not depend on the
 compression used. All sizes are in MB.}
 \label{tab:MongoComp}
 \end{table}
@@ -315,7 +315,7 @@ compression used. All sizes are in MB.}
 	\label{fig:MDBcomparison}
 \end{figure}
 
-The conclusion is that if the administrator does not have a critically low amount of disk space available, MongoDB
+We can conclude: if the administrator does not have a critically low amount of disk space available, MongoDB
 works best with the new WiredTiger storage engine with default compression. In figure \ref{fig:DBscomparison} we 
 can see the comparison of performance on the sample queries between the WiredTiger configuration of MongoDB and 
 Elasticsearch. 
@@ -329,17 +329,18 @@ Elasticsearch.
 \end{figure}
 
 The queries on MongoDB are taking much more time than on Elasticsearch. MongoDB provides
-a tool for explaining query execution which comes in very useful when trying o investigate efficiency problems
-like this one. When trying to explain a sample query the output of the command can be seen in listing in appendix 
-\ref{app:MDB}. The query planner tries all the indexes associated with one of the queried properties, then 
-picks one and based on just it performs the search. The search results are then filtered so that the returned 
+a tool for explaining query execution. This comes in very useful when trying to investigate efficiency problems
+like this one. In the listing in appendix \ref{app:MDB}, one can see the output of the command for one of the 
+sample queries. The query planner tries all the indexes associated with one of the queried properties, then 
+picks one and based on just this one performs the search. The search results are then filtered so that the 
+returned 
 fields satisfy the other conditions of the input query. To test the best possible performance, special compound 
 indexes were created for each query and the performance was tested using these indexes. 
 
 \begin{figure}[h]
 	\centering
 	\input{img/MDBcompound.tex}
-	\caption{Comparison between MongoDB with indexes created specially for the tested queries (MDB comp) and 
+	\caption{Comparison between MongoDB with indexes created especially for the tested queries (MDB comp) and 
 	Elasticsearch. To show the improvement the MongoDB performance without the compound indexes is graphed as well
 	(MDB WT)}
 	\label{fig:MDBcompound}
@@ -351,9 +352,9 @@ than Elasticsearch, although there is a great improvement when compared to the v
 
 \subsection{The comparison between NoSQL and the Current Deployment}
 
-Currently the database back-end to all the services in DIRAC, where a database is needed including the File Catalog
-and its metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen in figure
-\ref{fig:DFCUML}.
+Currently the database back-end to all the services in DIRAC, where a database is needed including the File 
+Catalog and its metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen 
+in figure \ref{fig:DFCUML}.
 
 \begin{figure}[h]
 	\centering
@@ -365,15 +366,16 @@ and its metadata part, is relying on MySQL. The table scheme of the metadata par
 	\label{fig:DFCUML}
 \end{figure}
 
-In order to see if it is worth to start using a NoSQL database, this project compared the one that performed 
-the best in the tests with the current deployment. When trying to test the MySQL database against the same queries 
+In order to see if it is worth to start using a NoSQL database, in this project we compared current deployment  
+with the database that performed the
+best in the tests we completed. When trying to test the MySQL database against the same queries 
 by only loading the relevant data (creating tables only for 8 integer typed metadata and 3 string ones), the 
 performance was much better than all the NoSQL databases. This was due to the fact, that the MySQL engine loaded
-the whole dataset in memory and did not have to use the disk after that. This however is not the expected 
+the whole dataset in memory and did not have to use the disk when executing the query. This however is not the expected 
 behavior, because the database engine most likely will not serve only the DFC metadata catalog, so there will not
 be enough memory space to keep all the metadata in cache. To test how the database could behave in production, the 
 command \texttt{flush tables;} was used after every query to dump the cached tables. Also the whole dataset
-was inserted into the database. This also let us to compare the size of data indexed by MySQL to NoSQL (table 
+was inserted into the database. This also let us to compare the size of data indexed by MySQL and by NoSQL (table 
 \ref{tab:allDbSizes}). 
 
 \begin{table}[h]
@@ -386,28 +388,33 @@ Elasticsearch & 59 715                                   \\ \hline
 csv files     & 113 384                                  \\ \hline
 MySQL         & 185 135                                  \\ \hline
 \end{tabular}
-\caption{Disk usage comparison all databases. For comparison the size of the input csv files are shown. All sizes 
-are in MB.}
+\caption{The comparison disk usage for all databases. For an illustration the size of the input csv files is
+shown. All sizes are in MB.}
 \label{tab:allDbSizes}
 \end{table}
 
 To test the databases more thoroughly a new set of queries was created. These queries consult more than just the 
 small set of metafields indexed by the MongoDB. The MySQL on this set proved itself better on queries consulting
-a lesser number of metafields and a larger number of hits. Elasticsearchs' performance seems to be proportionate
-to the number of hits and the complexity of the query does not seem to have an effect on its speed (results in 
+a lesser number of metafields and a larger number of hits. Performance of Elasticsearch seems to be proportionate
+to the number of hits while the complexity of the query does not seem to have an effect on its speed (results in 
 figure \ref{fig:wide}).
 
 \begin{figure}[h]
 	\centering
 	\input{img/ES_MySQL_wide.tex}
-	\caption{Comparison between Elasticsearch (ES) and the now deployed MySQL on a larger set of queries.}
+	\caption{Comparison between the now deployed MySQL and Elasticsearch (ES) on a larger set of queries. 
+	Elasticsearch performance with data re-indexed to one shard is also graphed (ES one shard).}
 	\label{fig:wide}
 \end{figure}
 
 In all the tests above Elasticsearch and its indexes were left with the default settings. Because ES is primarily 
 a distributed store, the default setting assumes that there will be more than just one server in the cluster. This
 means that for every read several nodes have to be contacted and even though the testing deployment consists of 
-only one server, the index cut the data into 5 shards (default setting). The volume of data used 
+only one server, the index cut the data into 5 shards\footnote{A shard is a single Lucene instance. It is a low-
+level ``worker" unit which is managed automatically by Elasticsearch. An index is a logical namespace which points 
+to primary and replica shards.} (default setting). The volume of data used 
 in this project is not as large to need a whole cluster to be stored in so it was re-indexed into an index 
-with no replicas and only one shard, which is ideal when only one server is used. Also it comes closer to the 
-MySQL database, because it can be run on only one server. %TODO results
+with no replicas and only one primary shard, which is ideal when only one server is used. Also it comes closer to 
+the MySQL database, because it can be run on only one server. The performance on re-indexed data was not 
+significantly better and an even worse performance drop is observable when fetching a large number of documents. 
+The queries contained from 2 to 6 conditions (consulted 2 to 6 different metadata).

@@ -1,4 +1,5 @@
 \chapter{The Metaquery}
+\label{chap:MQ}
 
 When working with metadata in the DFC's metadata catalog, one of the most important operations is 
 to find files by giving a specific set of conditions on their metadata. Each condition concerning
@@ -88,7 +89,7 @@ properties. Every formula can be transferred to DNF and  method \texttt{setMetaQ
 calls a private method for optimization.
 
 \begin{algorithm}[h]
-\caption{Convert the input string into DNF query}
+\caption{Convert the tokenized input string into a query in DNF}
 \begin{algorithmic}[1]
 \Procedure{ToDnf}{inputList}
 \State \textit{termTmp} = [ ]; \textit{last} = [ ]
@@ -103,7 +104,6 @@ calls a private method for optimization.
 		\ElsIf{\textit{negGlobal} is set}
 			\State Switch \textit{atom} meaning
 		\EndIf
-		
 		\If{\textit{atom} is AND}
 			\State add \textit{last} or \textit{newTerm} in conjunction buffer
 		\ElsIf{\textit{atom} is NOT}
