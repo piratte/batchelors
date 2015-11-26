@@ -242,20 +242,20 @@ indexes and their space requirements are listed in table \ref{tab:indexBuildTime
 
 \begin{table}[h]
 \centering
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{Field}    & \textbf{Time}     & \textbf{Disk Space (MMAP)} & \textbf{Disk Space (WT)} \\ \midrule
-testInt1 & 00:20:50 & 211 390           & 46 785          \\ \hline
-testInt2 & 00:20:00 & 211 407           & 46 789          \\ \hline
-testInt3 & 00:19:59 & 211 390           & 46 785          \\ \hline
-testInt4 & 00:20:12 & 211 415           & 46 789          \\ \hline
-testInt5 & 00:19:58 & 211 390           & 46 785          \\ \hline
-testStr1 & 00:20:06 & 203 043           & 44 351          \\ \hline
-testStr2 & 00:20:13 & 203 026           & 44 351          \\ \hline
-testStr3 & 00:20:51 & 203 043           & 44 356          \\ \hline
-testInt6 & 00:21:03 & 211 407           & 46 789          \\ \hline
-testInt7 & 00:19:57 & 211 399           & 46 785          \\ \hline
-testInt8 & 00:19:58 & 211 390           & 46 785          \\ \toprule
+\textbf{Field}   & & \textbf{Time}     & \textbf{Disk Space (MMAP)} & \textbf{Disk Space (WT)} \\ \midrule
+testInt1 & & 00:20:50 & 211 390           & 46 785          \\ \hline
+testInt2 & & 00:20:00 & 211 407           & 46 789          \\ \hline
+testInt3 & & 00:19:59 & 211 390           & 46 785          \\ \hline
+testInt4 & & 00:20:12 & 211 415           & 46 789          \\ \hline
+testInt5 & & 00:19:58 & 211 390           & 46 785          \\ \hline
+testStr1 & & 00:20:06 & 203 043           & 44 351          \\ \hline
+testStr2 & & 00:20:13 & 203 026           & 44 351          \\ \hline
+testStr3 & & 00:20:51 & 203 043           & 44 356          \\ \hline
+testInt6 & & 00:21:03 & 211 407           & 46 789          \\ \hline
+testInt7 & & 00:19:57 & 211 399           & 46 785          \\ \hline
+testInt8 & & 00:19:58 & 211 390           & 46 785          \\ \toprule
 \end{tabular}
 \caption{The time and storage requirements for indexes used in MongoDB. The indexes were built while using
 the MMAP storage engine. Sizes are in MB.}
@@ -293,7 +293,7 @@ can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fi
 
 \begin{table}[h]
 \centering
-\begin{tabular}{lcc}
+\begin{tabular}{lccc}
 \toprule
 \textbf{Storage engine}             & \textbf{Total database size} & \textbf{Total index size} \\ 
 \midrule
@@ -382,14 +382,14 @@ was inserted into the database. This also let us to compare the size of data ind
 
 \begin{table}[h]
 \centering
-\begin{tabular}{lc}
+\begin{tabular}{lcc}
 \toprule
-\textbf{Database}      & \textbf{Total database size}  \\ 
+\textbf{Database}      & & \textbf{Total database size}  \\ 
 \midrule
-MongoDB                & 42 249                        \\ 
-Elasticsearch          & 59 715                        \\ 
-csv files              & 113 384                       \\ 
-MySQL                  & 185 135                       \\ 
+MongoDB                & & 42 249                        \\ 
+Elasticsearch          & & 59 715                        \\ 
+csv files              & & 113 384                       \\ 
+MySQL                  & & 185 135                       \\ 
 \toprule
 \end{tabular}
 \caption{The comparison disk usage for all databases. For an illustration the size of the input csv files is
