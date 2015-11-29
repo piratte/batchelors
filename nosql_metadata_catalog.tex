@@ -9,7 +9,7 @@ Elasticsearch.
 \section{Query Strategy}
 The current query search algorithm cuts the query per element of the disjunction. With each element the Catalog
 finds directories satisfying the directory part of the query, then it finds the files satisfying the file part. 
-With the list of files and list of directories it filteres out the files that are not in the subtree of one of the
+With the list of files and list of directories it filters out the files that are not in the sub-tree of one of the
 satisfying directories (the algorithm is described by algorithm \ref{alg:find}).
 
 \begin{algorithm}[h]

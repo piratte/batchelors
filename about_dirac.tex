@@ -12,7 +12,7 @@ that can be run by only one production manager.
 The DIRAC software architecture is based on a set of distributed, collaborating services. Designed to have a
 light implementation, DIRAC is easy to deploy, configure and maintain on a variety of platforms. Following
 the paradigm of a Services Oriented Architecture (SOA)\cite{SOA}, DIRAC is lightweight, robust and scalable. 
-One of the primary goals was to support various virtual organization with their specific needs, it supports well 
+One of the primary goals was to support various virtual organization with their specific needs: it supports well 
 isolated plugable modules, where the organizations specific features can be located. It allows to construct
 grids of up to several thousands processors by integrating diverse resources within its integrated Workload
 Management System. The DIRAC Data Management components provide access to standard grid storage systems. 
@@ -25,12 +25,12 @@ DIRAC components can be grouped in to four categories:
 
 \item[Resources] \hfill \\
 Because every grid middleware has to deal with a large number of different technologies, it needs its own 
-interfaces for each of them. For this purpose DIRAC has a class of components called Resources,
+interfaces for each of them. To this end DIRAC has a class of components called Resources,
 which provides access to the available computing and storage facilities. 
 Computing resources include individual PCs, computer farms, cloud resources and computing grids. Storage 
 resources include storage elements with SRM interface \cite{SRM} and most of the popular data access 
 protocols (gridftp, (s)ftp, http,...) are integrated as well\footnote{DIRAC does not provide its own complex 
-storage element, it includes however a Storage Element service which provides access to disk 
+storage element, it includes however a Storage Element service which yields access to disk 
 storage managed by a POSIX compliant file system. This is sufficient for small deployments and development
 purposes}.
 
@@ -39,8 +39,8 @@ purposes}.
 \item[Services] \hfill \\
 The DIRAC system is built around a set of loosely coupled services that keep the system status and
 help to carry out workload and data management tasks. The Services are passive components which
-are only reacting to the requests of their clients possibly contacting other services in order to
-accomplish the tasks. Each service has typically a MySQL \cite{MySQL} database backend to store the state
+are only reacting to the requests of their clients, possibly contacting other services in order to
+accomplish their tasks. Each service has typically a MySQL \cite{MySQL} database backend to store the state
 information. The services accept incoming connections from various clients. These can be user interfaces,
 agents or running jobs. 
 
@@ -52,7 +52,7 @@ reacting accordingly by initiating actions like job submission or result retriev
 \item[Interfaces] \hfill \\
 The DIRAC functionality is exposed to the system developers and to the users in a variety of ways. 
 	\begin{itemize}
-		\item The DIRAC programming language is python, so the programming interfaces (APIs) are provided in this 
+		\item The DIRAC programming language is python, so the programming interfaces (APIs) are available in this 
 			language
 		\item For users the DIRAC functionality is available through a command line interface. Some subsystems 		
 			have specialized shells to work with.
@@ -77,15 +77,15 @@ DIRAC are:
 \item \textbf{Configuration System}
 	is built to provide static configuration parameters to all the distributed DIRAC components. Being able to
 	distribute the configuration is critical. When the configuration data is not available, 
-	the systems can not work. For maximum reliability it is organized as a single master service where 
-	all the parameter updates are done and multiple read-only slave services, which are distributed geographically.
+	the systems cannot work. For maximum reliability it is organized as a single master service, where 
+	all the parameter updates are done, and multiple read-only slave services, which are distributed geographically.
 
 \item \textbf{Web Portal}
 	is the standard way to present information to visitors. It provides authentication based on user grid
 	credentials and user groups: ordinary users can see their jobs and have minimal interaction with
 	them, administrators can change the global configuration in a graphical interface.
-	All the monitoring and control tools of a DIRAC system are exported through the Web portal 
-	which makes them uniform for user working in different environments and on different platforms.
+	All the monitoring and control tools of a DIRAC system are exported through the Web portal, 
+	which makes them uniform for users working in different environments and on different platforms.
 	
 \item \textbf{Logging System}
 	is a uniform logging facility for all the DIRAC components.
@@ -102,7 +102,7 @@ DIRAC are:
 \end{figure}
 
 Other widely used systems include the Workload Management System, able to manage simultaneously computing
-tasks for a given user community \cite{WMS}, Request Management System \cite{RMS} managing simple operations that 
+tasks for a given user community \cite{WMS}, Request Management System \cite{RMS} managing simple operations, that 
 are performed asynchronously on behalf of users, and others. 
 
 \section{DIRAC Data Management System}
@@ -130,7 +130,7 @@ registered in various storage systems and file catalogs.
 
 Any middleware solution covering the problem of Data Management must have a file catalog enabling the user to  
 find the files he wants to work with, and a replica catalog keeping tracks of file replication.The DIRAC 
-couples these two services into one introducing the DIRAC File Catalog (DFC)\cite{DFC}. 
+couples these two services into one, introducing the DIRAC File Catalog (DFC)\cite{DFC}. 
 Implemented using the DISET framework (see figure \ref{fig:FCDiag}), the access to DFC is done with an efficient secure 
 protocol compliant with the grid security standards.
 The protocol allows also to define access rules for various DFC functionalities based on the user roles. The
@@ -157,7 +157,7 @@ module plugged in the \texttt{dtree} slot in the \texttt{FileCatalogDB} class in
 	\centering
 	\includegraphics[width=\textwidth]{FCUML.pdf}
 	\caption{UML diagram of the tables in the current MySQL implementation of the DIRAC File Catalogs DB. The color 
-	schneme is chosen to make the orientaion in the diagram easier: the grey tables are ``the core" of the File Catalog, blue are
+	scheme is chosen to make the orientation in the diagram easier: the grey tables are ``the core" of the File Catalog, blue are
 	directory related, green are file related, purple are for the dataset manager, yellow are the Replica Catalog
 	and red are the Metadata Catalog (in the initial state. When the user starts creating indexes, for each 
 	index there is going to be a new table). Note that there are no relations between the tables, this is because
@@ -169,12 +169,12 @@ module plugged in the \texttt{dtree} slot in the \texttt{FileCatalogDB} class in
 
 When managing distributed storage systems, one of the major problems is how to translate the logical 
 file name (LFN) into a URL of the file replicas, which in the DIRAC system is a task for the Replica
-Catalog. The replica information can be stored in 2 different ways. In the First case, the full Physical File
-Names (PFN) are stored as complete access URLs. In the Second case, the DFC exploits a convention
+Catalog. The replica information can be stored in 2 different ways. In the first case, the full Physical File
+Names (PFN) are stored as complete access URLs. In the second case, the DFC exploits a convention
 that the PFNs are containing the corresponding LFNs as its trailing part. 
 This helps to establish correspondence between the physical files and entries in the catalogs when checking 
 the data integrity. There is also no need to store the full PFN in the catalog, when
-the information about the wanted storage element (SE) is available. In such case the PFN can be constructed on 
+the information about the wanted storage element (SE) is available. In such a case the PFN can be constructed on 
 the fly and when the SE description changes, e.g. its access point, it is enough to change the SE description in the DIRAC 
 Configuration System to continue receiving correct PFNs. Support for managing various user and group usage 
 quotas is also implemented. Another feature supported by the Catalog based on the experience in 
@@ -187,7 +187,7 @@ Each virtual organization has varying needs in terms of file metadata, DIRAC tak
 attracts more users by enabling them to define their own. The Metadata Catalog keeps track of these 
 arbitrary user metadata associated with his files and directories as key-value pairs. 
 The catalog administrators can declare certain keys. In the current implementation whenever an 
-index is being declaired, another table in the MySQL database is created to store the values of the 
+index is being declared, another table in the MySQL database is created to store the values of the 
 respective metadata. The indexed metadata can be used in file lookup operations. The value types include 
 numbers, strings or time stamps. To decrease the amount of data in the database, and to simplify the 
 administration, the metadata values are inherited in the directory structure. So when a metadata is 
@@ -197,7 +197,7 @@ set as well. The directory hierarchy is common for both the Replica Catalog and 
 \subsection{DFC Interfaces}
 
 The DFC is providing several user interfaces. The command \\ \texttt{dirac-dms-filecatalog-cli} launches a shell
-connected to the file catalog the user is supposed to interact with based on his or her user group and VO. Its 
+connected to the file catalog the user is supposed to interact with, based on his or her user group and VO. Its 
 functionality is similar to a classic UNIX shell, with commands like \texttt{ls, cd, chmod,...}, with added 
 file catalog specific commands for handling metadata, replication, storage element usage reports.
 

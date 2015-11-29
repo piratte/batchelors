@@ -12,7 +12,7 @@ one metafield is called term and is in the form of \texttt{<metafield> <operator
 \end{itemize}
 
 In the current production implementation the terms are coupled 
-together by writing them in a space separated list which translates into a conjunction with
+together by writing them in a space separated list, which translates into a conjunction with
 each space having the same meaning as the logical operator \texttt{AND}.
 
 As the DFC grows bigger and more elaborate, the need for new classes emerges. Before the 
@@ -42,14 +42,14 @@ formula is then true when at least one of the disjuncts evaluates as true, which
 the trueness of the formula on a given set of metadata values rather easy.
 
 To be able to use this form, an efficient practical implementation had to be discussed, having in 
-mind that backwards compatibility with the old metaquery representation mandatory. The decision 
+mind that backwards compatibility with the old metaquery representation is mandatory. The decision 
 was made to represent the formula in DNF using a list of dictionaries, where each dictionary 
 represents one conjunct of the outer disjunction. This is similar to the status before this project
 when only one dictionary was used to represent a conjunction of terms. 
 
 \section{Metaquery Implementation}
 
-The Metaqury class contains 
+The Metaquery class contains 
 \begin{itemize}
 \item the information about the metaquery itself written in a form of list,
 \item information about the types of all the metafields,
@@ -78,9 +78,9 @@ tokenized and fed into the \texttt{setMetaQuery} method.
 
 When the user inputs a query it first has to be tokenized. To enable the user to input the query without caring 
 about whitespace distribution, the tokenization is done character by character.
-If the user wants to use the old input method (query string is in form 
-\texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*})
-it is possible and the output will be one conjunction as expected (AND operators are inserted in the
+The user can also use the old input method (query string is in form 
+\texttt{<metafield> <operator> <value> [<metafield> <operator> <value>]*}), the output will be then one conjunction 
+as expected (AND operators are inserted in the 
 correct places). However when the user uses at least one logical operator, no additional insertions are made
 and the rest of the input has to be a well formed formula. 
 
@@ -121,7 +121,7 @@ calls a private method for optimization.
 
 
 The normalization algorithm follows the proof in a sense that when it traverses the input left to right, 
-recursively descending into every sub-formula, it first removes the negation\footnote{Removing negation depends on 
+recursively descending into every sub-formula, it first removes the negations\footnote{Removing negation depends on 
 the position of the NOT operator. When it is in front of the parenthesis surrounding a sub-formula it involves 
 switching the meaning of the logical operators in it. When the NOT operator is in front of a term the comparison 
 operators have to change (e.g. $ < \: \rightarrow \: \geq$).} 
@@ -144,14 +144,14 @@ To provide a correct input is a major challenge of the Metaquery class, although
 catalog features metaqueries is evidently the search for files. For files already stored in databases the DIRAC
 project tries to leave as much work as possible on the database, so the only thing to solve in this area is the 
 interface between the database and the file catalog (the conversion between the Metaquery class and the databases
-query language). This problem is tackled in chapter \ref{chap:databases}. 
+query language). This problem is tackled in the chapter \ref{chap:databases}. 
 
 Applying the metaquery to a particular
 set of metadata (for instance when a new file is uploaded to the file catalog) is handled by the Metaquery class 
 itself, although there has been a discussion whether it is possible to let the database engine handle this 
 situation. The conclusion was that applying an ordinary query would not be a big enough problem to 
 justify initiation of network communication between the catalog server and the database server (which is the 
-current practice of deployment). Instead a dictionary where metafields are keys indexing their values is passed 
+current practice of deployment). Instead a dictionary, where metafields are keys indexing their values, is passed 
 to the method \texttt{applyQuery()} on an initialized Metaquery class. Evaluating whether a concrete set of 
 metadata satisfies the metaquery is made as simple as possible by using the DNF, where each element of the 
 disjunction is tested (all the conditions in the element must be satisfied by the set of metadata). If at least
@@ -159,9 +159,9 @@ one passes, the query is satisfied.
 
 \subsection{Output of the Query}
 
-For the development of the function providing the output of the Metaquery class, the need for consistent result of equivalent 
+For the development of the function providing the output of the Metaquery class, the need for a consistent result of equivalent 
 metaqueries was the main goal. A disjunction is commutative so there has to be an artificial rule forcing the 
-disjuncts to appear always in the same order. Internaly the elements of the disjunction are represented as 
+disjuncts to appear always in the same order. Internally the elements of the disjunction are represented as 
 dictionaries, so sorting them according to their keys (the metafields) is the obvious choice. However, theoretically
 there could be two disjuncts with exactly the same metafields, so the values also had to be considered. In
 the case of identical metafields the optimization function guarantees that their values are going to be different.

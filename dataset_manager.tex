@@ -13,7 +13,7 @@ satisfying it. Moreover there are two types of datasets: a dynamic dataset and
 a frozen (static) one. A dynamic dataset is exactly what is described above: a set of all the
 files that satisfy a given metaquery. The dynamic dataset changes every time a file satisfying
 its metaquery is added to the file catalog. A frozen dataset is a snapshot of a dynamic dataset. The
-user can freeze a dataset the files of which he is using in order to maintain the set of files for
+user can freeze a dataset -- the files of which he is using -- in order to maintain the set of files for
 further evaluation or cross-checking the results of his work with other users over the same
 set of files. When a frozen dataset is later deleted, the user is asked whether the files, that 
 are exclusively contained in this dataset should be deleted. 
@@ -29,7 +29,7 @@ the dataset based on its' location in the directory tree) were missing.
 \section{Implementation Details}
 
 The DatasetManager is  one of the modules in the file catalog. The class offers
-multiple methods handling the datasets and exposing them to other modules. All the state of the 
+multiple methods handling the datasets and exposing them to other modules. The state of the 
 datasets is saved in a database, the class itself holds only an instance of the database interface
 object, so restarting the FileCatalog service is done without any problems. The module handles mainly
 basic CRUD operations with some additions.
@@ -39,10 +39,10 @@ basic CRUD operations with some additions.
 When a dataset is created an entry is inserted to the database. It contains the dataset name, id, metaquery, 
 status, id of the directory it is located in, UID and GID of the user who created it and some other 
 properties. When a dataset is frozen, the query is evaluated and all the files, which the
-dataset contains, are associated with it (the records are inserted in the table \texttt{FC\_MetaDatasetFiles}.
+dataset contains, are associated with it (the records are inserted in the table \texttt{FC\_MetaDatasetFiles}).
 Releasing the dataset only deletes these records and updates the cached properties. 
 
-When deleting a dataset its record in the database is removed. Moreover when the deleted dataset is frozen
+When a dataset is deleted its record in the database is removed. Moreover when the deleted dataset is frozen
 it is requested it would be deleted with the files it contains not including files contained by another frozen
 dataset. This is done using one select
 
@@ -59,7 +59,7 @@ HAVING Count(*)=1;
 \end{minted}
 
 \noindent where in place of the \texttt{X} symbol the id of the deleted dataset is inserted. The user is then 
-asked, whether he wants to really delete those files from the file catalog. When he agrees, a request to
+asked, whether he really wants  delete those files from the file catalog. When he agrees, a request to
 the DIRACs Request Management System (RMS) is created. This system ensures that all the files
 are deleted from all the storage elements as well as from the file catalog database, 
 which prevents memory leaks. The RMS is also used when dataset replication is executed.

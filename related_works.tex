@@ -1,7 +1,7 @@
 \chapter{Related works}
 \label{chap:relwork}
 
-Currently there are several other middleware projects like DIRAC. The DFC was developed by the LHCb experiment 
+Currently there are several other middleware projects similar to DIRAC. The DFC was developed by the LHCb experiment 
 collaboration which however has similar needs as the other LHC experiments. Thus, the ATLAS
 Distributed Data Management system and the AliEn file catalog are the closest comparable solutions.
 
@@ -13,15 +13,15 @@ ATLAS records a huge amount of data – more than 10PB of raw collision data hav
 started running. After the first pass of processing was done at CERN, the data is registered in the ATLAS 
 Distributed Data Management system (DDM) \cite{ATLASDDM1}.
 
-Although a basic unit of data in the ATLAS DDM is a file the basic operational unit is a dataset: they may be
-transferred to grid sites, whereas single files may not. There is also one more layer of aggragation called the 
+Although a basic unit of data in the ATLAS DDM is a file, the basic operational unit is a dataset: they may be
+transferred to the Grid sites, whereas single files may not. There is also one more layer of aggregation called the 
 container, which is a collection of datasets. Datasets may overlap and in practice they do so in a 
 hierarchical manner: production will use small datasets, referring to a few jobs processed at a site. These datasets
 are then aggregated into the main dataset, which refers to a particular task in the ATLAS
-production system. Then these main datasets may be added to a container, where the output of several 
+production system. These main datasets then may be added to a container, where the output of several 
 similar tasks is gathered. Datasets may be opened (new files can be added to them), closed (no new files
-may be added, but could have versions which differ in file content) and frozen (no new files may be added and no 
-new versions created). 
+may be added, but could have versions which differ in their file content) and frozen (no new files may be added and 
+no new versions created). 
 
 The responsibilities of the ATLAS DDM cover data registration, transfers between sites, file deletion, dataset 
 consistency ensuring (manage file loses on sites), enforcing ATLAS Computing model policies and monitoring. The
@@ -97,12 +97,12 @@ above files, then just datasets: there are nested datasets and then containers. 
 structure in the names of datasets and containers, they have just unique identifiers. 
 
 AliEn is opened for other virtual organizations, however there are only 2 other virtual organizations using 
-AliEn services, while there are more than 15 using DIRAC. Because the administration of a whole middleware 
+AliEn services, while there are more than 15 ones using DIRAC. Because the administration of a whole middleware 
 solution requires high effort, it was proposed to integrate smaller independent DIRAC installations into 
 a single service to optimize operational costs, thus the France-Grilles DIRAC service (FG-DIRAC), 
 after an initial pre-production period of 6 months, was put into production in May 2012 \cite{FGDIRAC}.
 This enabled small user groups, which were not capable of installing, configuring and maintaining  
-such complex systems as DIRAC to use it without needing to understand and operate complex software and
+such complex systems as DIRAC, to use it without the need to understand and operate the complex software and
 configurations. From the data management point of view, the  structure is similar: there are files and datasets in a 
 directory structured space, user can define new metadata.
 

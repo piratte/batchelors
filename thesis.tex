@@ -40,7 +40,9 @@
 \usepackage{algorithm,algorithmicx,algpseudocode}
 \usepackage{minted}
 
+%\usepackage{fancyhdr}%,mychapter}
 \usepackage[toc,title,header]{appendix}
+\usepackage[nottoc,notbib,notlof]{tocbibind}
 
 %% Balicky pro pekne vytisteni zdrojoveho kodu
 \usepackage{listings}
@@ -168,16 +170,20 @@ Prague 2015
 \openright
 
 \noindent
-I would like to thank my supervisor, doc. RNDr. Irena Holubová, Ph.D., for patience and advice when
+I would like to thank my supervisor, doc.~ RNDr.~Irena~Holubová,~Ph.D., for her patience and advice when
 writing this thesis. 
 
-I would also want to thank Dr. Andrei Tsaregorodtsev, the DIRAC product manager for finding me a suitable
-task I could work on during my thesis and to continuous encouragement and help during my work. 
-Further, I thank RNDr. Jiří Chudoba, Ph.D. for providing me with a suitable testing
+\medskip \noindent
+I would also want to thank Dr.~Andrei~Tsaregorodtsev, the DIRAC product manager for finding me a suitable
+task I could work on during my thesis and for continuous encouragement and help during my work. 
+
+\medskip \noindent
+Further, I thank RNDr.~Jiří~Chudoba,~Ph.D. for providing me with a suitable testing
 environment in the computing center of the Institute of Physics of the Czech Academy of Sciences.
 
-Finally my thanks belong to my parents for helping me enhance the text of this thesis and last but not least my 
-girlfriend Annie for her great patience and support.
+\medskip \noindent
+Finally my thanks belong to my parents for helping me to enhance the text of this thesis and last but not least I 
+thank my girlfriend Annie for her great patience and support.
 
 \newpage
 
@@ -198,7 +204,7 @@ work as a school work pursuant to Section 60 paragraph 1 of the Copyright Act.
 \vspace{10mm}
 
 \hbox{\hbox to 0.5\hsize{%
-In ........ date ............
+In Prague date 3.12.2015
 \hss}\hbox to 0.5\hsize{%
 signature of the author
 \hss}}
@@ -228,8 +234,8 @@ doc. RNDr. Irena Holubová, Ph.D.
 % dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF UK
 
 Abstrakt:
-V této práci je rozšířen DIRAC File Catalog (DFC) o modul DatasetManager přidávající funkcionalitu datasetů 
-definovaných dotazem nad metadaty. K vylepšení práce s dotazy v kódu systému, je vyvinuta nová třída MetaQuery,
+V této práci je rozšířen DIRAC File Catalog (DFC) o modul DatasetManager, přidávající funkcionalitu datasetů 
+definovaných dotazem nad metadaty. K vylepšení práce s dotazy v kódu systému je vyvinuta nová třída MetaQuery,
 která shlukuje obslužné metody a přidává normalizaci a optimalizaci dotazu na vstupu. Jazyk vyjadřující 
 dotazy byl také rozšířen přidáním možnosti používat logické spojky a závorky. 
 
@@ -264,12 +270,12 @@ doc. RNDr. Irena Holubová, Ph.D.
 Abstract:
 In this thesis the DIRAC File Catalog (DFC) is extended by adding a DatasetManager module thus adding support
 for datasets based on metadata queries. To improve the metaquery handling in the code a new class MetaQuery 
-was implemented, which bundles the handling methods as well as adds normalization and optimization of the user 
-input. Also the metaquery language was extended enabling logical operators and parenthesis. 
+was implemented, which bundles the handling methods and adds normalization and optimization of the user 
+input. The metaquery language was extended enabling logical operators and parenthesis. 
 
 In the second part of the thesis the hypothesis that connecting the metadata part of the DIRAC File Catalog to a 
 NoSQL database could improve metaquery performance is evaluated. Several databases are tested and the best 
-performing is then connected using an interface module to the DFC.
+performing one is then connected via an interface module to the DFC.
 
 Keywords:
 System DIRAC, NoSQL databases, efficient processing of data files, metadata querying
@@ -302,8 +308,10 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 \include{bibliography}
 
 %%% Tabulky v bakalářské práci, existují-li.
-\chapwithtoc{List of Tables}
-
+%\chapwithtoc{List of Tables}
+\cleardoublepage 
+%\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
 
 
 %%% Použité zkratky v bakalářské práci, existují-li, včetně jejich vysvětlení.
@@ -314,7 +322,7 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 	world.
 	\item[LHC] Large Hadron Collider -- the world's largest and most powerful particle collider built by CERN
 	\item[WLCG] The Worldwide LHC Computing Grid -- global collaboration of more than 170 computing 
-	centres in 42 countries, linking up national and international grid infrastructures
+	centers in 42 countries, linking up national and international grid infrastructures
 	\item[ALICE] A Large Ion Collider Experiment -- one of the largest experiments in the world devoted to 
 	research in the physics of matter at an infinitely small scale, hosted at CERN
 	\item[LCHb] Large Hadron Collider beauty -- one of the four big experiments for the LHC, hosted at CERN
@@ -346,7 +354,7 @@ System DIRAC, NoSQL databases, efficient processing of data files, metadata quer
 
 \begin{appendix}
 \renewcommand{\chaptermark}[1]{\markboth{Appendix \thechapter \hspace{0.1mm}\ #1}{}}
-\addappheadtotoc
+%\addappheadtotoc
 \include{AP_queries}
 \include{AP_MDBExplain}
 \end{appendix}

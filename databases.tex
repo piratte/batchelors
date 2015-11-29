@@ -5,19 +5,19 @@ file catalog, more specifically its metadata part, to a NoSQL database would
 improve the feedback speed of the service thus making it more pleasant to use
 or make it easier to implement and maintain. The new database had to satisfy the
 following conditions in order to be connectable to DIRAC and deployable in
-the computing centers.
+the computing centers
 
 \begin{itemize}
-\item There has to be a free-ware version which could DIRAC use.
-\item The database has to have a python interface or client so it would be easy
-to incorporate into DIRACs code.
+\item there has to be a freeware version which could DIRAC use,
+\item the database has to have a python interface or client so it would be easy
+to incorporate into the DIRACs code.
 \end{itemize}
 
 The characteristics of the data itself add some restrictions. The database should be
 optimized for search speed. When combined with the current metadata implementation, we
 get two different types of data retrieval. For directories 
 the database has to be able to get all the metadata associated with a directory
-identified by an ID. On contrary the files are fetched based on the terms in the metaquery so
+identified by an ID. On the contrary, the files are fetched based on the terms in the metaquery so
 all the querying techniques the metaquery could use have to be possible, including
 range queries. 
 
@@ -42,9 +42,9 @@ used by all relational databases, it looks like a perfect candidate for the meta
 \subsection{Developing a Data Model for Cassandra}
 
 Although CQL makes it look like a relational database, the developer has to bare in mind, that
-Cassandra is different. The first scheme used the altering number of columns and organized the 
+Cassandra is different. Our first scheme used the altering number of columns and organized the 
 data in tables, where each file or directory had its own row with metanames being the column
-names and values being the column values (this model greatly resembles the theoretical data 
+names and values being the column values (this model strongly resembles the theoretical data 
 scheme in figure \ref{fig:theoDataScheme}) with secondary indexes over column values so that 
 the query would be possible. Although CQLs' similarity with SQL would suggest otherwise, 
 it turned out that this kind of indexing does not support range queries so this data-model
@@ -73,7 +73,7 @@ file IDs of files having this metaname and value associated with them.
 \end{table}
 
 The rows are grouped in tables by value type, because the algorithm used to sort the
-column names is unified per table. There also is an index over fileID sets, 
+column names is unified per table. There is also an index over fileID sets, 
 so that retrieving all metadata for one specific file is possible, but the scheme is 
 not optimized for this operation, because this is done only for the users information and
 when setting new metadata.
@@ -113,10 +113,10 @@ files from the database and then doing a intersection in the python code is clea
 
 Both following databases are document-oriented and the data scheme is fairly similar in both
 of them. A document-oriented database replaces the concept of a \textit{row} from the world of relational 
-databases with a more dynamic and versatile \textit{document}. Allowing arrays and embedded documents the 
-document-oriented databases provides de-normalization of the data and  of complex 
-relationships in a single document. Also there are no predefined schemes, which helps with development 
-and testing and in case of this project is essential because the number of associated metadata varies between 
+databases with a more dynamic and versatile \textit{document}. By allowing arrays and embedded documents the 
+document-oriented databases provide de-normalization of the data and of complex 
+relationships in a single document. Also there are no predefined schemes, which is essential for our project because 
+the number of associated metadata varies between 
 files. The metadata are stored in a JSON structure with fields being meta names, indexes above properties and key 
 mapped to the dir or file ID.
 
@@ -161,9 +161,9 @@ Overall the database is easy to use and administer thanks to many well documente
 
 There are two types
 of configuration files supported by MongoDB: the older one in form of \texttt{<setting> = <value>} and the 
-newer in Yaml format \cite{YAML}. The database ships with the older one (although it is not developed since version 2.4), but
+newer in YAML format \cite{YAML}. The database ships with the older one (although it is not developed since version 2.4), but
 most of the configuration documentation is in the newer one (and some of the new features can be only set in 
-Yaml format) so the administrator should convert it manually before using the database since it could ease up
+YAML format) so the administrator should convert it manually before using the database since it could ease up
 the usage and optional re-configuration later.
 The major drawback when using this database is that every property has to be indexed manually, which not only 
 takes time, but also consumes disk space (more thorough explanation of this problem later).
@@ -176,7 +176,7 @@ Elasticsearch (ES) is a real-time distributed open-source analytics and search e
 built on top of Apache Lucene\footnote{\url{https://lucene.apache.org/}}. Unlike very complex Lucene, 
 ES features a simple RESTful API that makes it easy to use. Moreover it could be used not only 
 for full-text search, but for real-time analytics or, which is important for this project, as a 
-distributed document store, where \textit{every} field is indexed and search-able. Its python 
+distributed document store, where \textit{every} field is indexed and searchable. Its python 
 client\footnote{\url{http://elasticsearch-py.readthedocs.org/en/master/}} provides a wrapper for the RESTful API
 as well as some useful additional commands called helpers (e.g. for bulk loading data, the command 
 \texttt{helpers.bulk(es, dataToLoad(size))} was used).
@@ -200,7 +200,7 @@ first inserted document using its default configuration.
 \section{Database Tests}
 
 For testing, a single IBM iDataPlex dx340 server was used, equipped with 2x (Intel Xeon 5440 with 4 cores), 16GB
-of RAM and 300GB SAS hard drive, where all the database files were stored. After several smaller datasets, 
+of RAM and 300GB SAS hard disk, where all the database files were stored. After several smaller datasets, 
 the main testing data was generated trying to mimic the DIRAC production data structure. There is expected to
 be over 10 million files with approximately 20 different meta names.
 The set generated had $(10 000 000 - 1)$ files with $1$ to $998$ metanames associated with them\footnote{ 
@@ -211,12 +211,12 @@ integer values were all picked from the interval $[1;1000]$ and the string value
 words from the NATO phonetic alphabet\cite{NATO}, which lead to the easier composition of testing queries. 
 Integer fields represent continuous data types and string fields represent discreet data types.
 
-The data in form of two csv files with lines \texttt{id,metaname,value} were 53 and 59 GB big.
+The data in form of two csv files with lines \texttt{id,metaname,value} and the sizes of 53 and 59~GB.
 
 \subsection{Loading the Big Data}
 
 Both databases feature bulk loading functionality. Although the user will not probably use it, in
-this project that involved testing the databases on a large data the loading of the them was one 
+this project, which involved testing the databases on a large data, the loading of the them was one 
 of the challenges.
 
 Elasticsearch python interface features a bulk load function (default data chunk size is 500 records). 
@@ -271,7 +271,7 @@ considered while generating the queries. All the queries used can be seen in app
 The program testing the performance is a python script running on a personal computer in the same LAN as the 
 database machine (similarly to the expected deployment of the service). The measured time is the interval between 
 the moment the query was submitted, to the moment the results were extracted to a python list. Neither the 
-preparation of the query, nor the printing of the results were counted in the final time. 
+preparation of the query, nor the printing of the results were included in the final time. 
 
 For Elasticsearch the cache of the index was flushed after every query to keep the results consistent (although as 
 figure \ref{fig:EScache} suggests, flushing the cache does not make a notable difference for bigger data volumes). 
@@ -291,7 +291,7 @@ Storage Engine based on memory mapped files}. There is also a new storage engine
 Moreover the new engine brings the option of choosing the compression strategy. The comparison of disk space usage 
 can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fig:MDBcomparison}.
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
 \begin{tabular}{lccc}
 \toprule
@@ -374,7 +374,7 @@ best in the tests we completed. When trying to test the MySQL database against t
 by only loading the relevant data (creating tables only for 8 integer typed metadata and 3 string ones), the 
 performance was much better than all the NoSQL databases. This was due to the fact, that the MySQL engine loaded
 the whole dataset in memory and did not have to use the disk when executing the query. This however is not the expected 
-behavior, because the database engine most likely will not serve only the DFC metadata catalog, so there will not
+behavior, because the database engine will most likely not serve only the DFC metadata catalog, so there will not
 be enough memory space to keep all the metadata in cache. To test how the database could behave in production, the 
 command \texttt{flush tables;} was used after every query to dump the cached tables. Also the whole dataset
 was inserted into the database. This also let us to compare the size of data indexed by MySQL and by NoSQL (table 
@@ -382,6 +382,7 @@ was inserted into the database. This also let us to compare the size of data ind
 
 \begin{table}[h]
 \centering
+\label{tab:allDbSizes}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Database}      & & \textbf{Total database size}  \\ 
@@ -394,7 +395,6 @@ MySQL                  & & 185 135                       \\
 \end{tabular}
 \caption{The comparison disk usage for all databases. For an illustration the size of the input csv files is
 shown. All sizes are in MB.}
-\label{tab:allDbSizes}
 \end{table}
 
 To test the databases more thoroughly a new set of queries was created. These queries consult more than just the 
