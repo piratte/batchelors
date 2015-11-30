@@ -1,7 +1,7 @@
 \chapter{DIRAC - The Distributed Infrastructure with Remote Agent Control}
 \label{chap:DIRAC}
 
-The LHCb Collaboration \cite{LHCb} is running one of the four large experiments at the LHC particle 
+The LHCb Collaboration~\cite{LHCb} is running one of the four large experiments at the LHC particle 
 collider at CERN, Geneva. The amount of data produced by the experiment
 annually is so large that it requires development of a specialized system for the data reconstruction, simulation 
 and analysis. The DIRAC project of the LHCb Collaboration was started to
@@ -11,14 +11,14 @@ that can be run by only one production manager.
 
 The DIRAC software architecture is based on a set of distributed, collaborating services. Designed to have a
 light implementation, DIRAC is easy to deploy, configure and maintain on a variety of platforms. Following
-the paradigm of a Services Oriented Architecture (SOA)\cite{SOA}, DIRAC is lightweight, robust and scalable. 
+the paradigm of a Services Oriented Architecture (SOA)~\cite{SOA}, DIRAC is lightweight, robust and scalable. 
 One of the primary goals was to support various virtual organization with their specific needs: it supports well 
 isolated plugable modules, where the organizations specific features can be located. It allows to construct
 grids of up to several thousands processors by integrating diverse resources within its integrated Workload
 Management System. The DIRAC Data Management components provide access to standard grid storage systems. 
 The File Catalog options include the LCG File Catalog (LFC) as well as a simple DIRAC File Catalog discussed later. 
 
-\subsection{DIRAC Architecture}
+\section{DIRAC Architecture}
 DIRAC components can be grouped in to four categories: 
 
 \begin{description}
@@ -28,7 +28,7 @@ Because every grid middleware has to deal with a large number of different techn
 interfaces for each of them. To this end DIRAC has a class of components called Resources,
 which provides access to the available computing and storage facilities. 
 Computing resources include individual PCs, computer farms, cloud resources and computing grids. Storage 
-resources include storage elements with SRM interface \cite{SRM} and most of the popular data access 
+resources include storage elements with SRM interface~\cite{SRM} and most of the popular data access 
 protocols (gridftp, (s)ftp, http,...) are integrated as well\footnote{DIRAC does not provide its own complex 
 storage element, it includes however a Storage Element service which yields access to disk 
 storage managed by a POSIX compliant file system. This is sufficient for small deployments and development
@@ -40,7 +40,7 @@ purposes}.
 The DIRAC system is built around a set of loosely coupled services that keep the system status and
 help to carry out workload and data management tasks. The Services are passive components which
 are only reacting to the requests of their clients, possibly contacting other services in order to
-accomplish their tasks. Each service has typically a MySQL \cite{MySQL} database backend to store the state
+accomplish their tasks. Each service has typically a MySQL~\cite{MySQL} database backend to store the state
 information. The services accept incoming connections from various clients. These can be user interfaces,
 agents or running jobs. 
 
@@ -61,10 +61,10 @@ The DIRAC functionality is exposed to the system developers and to the users in 
 
 \end{description}
 
-\subsection{DIRAC Framework}
+\section{DIRAC Framework}
 
 DIRAC’s logic is built on top of basic services that provide transversal
-functionality to DIRAC Systems \cite{DISET}. The set of basic services that form the core framework for
+functionality to DIRAC Systems~\cite{DISET}. The set of basic services that form the core framework for
 DIRAC are: 
 \begin{itemize}
 
@@ -102,7 +102,7 @@ DIRAC are:
 \end{figure}
 
 Other widely used systems include the Workload Management System, able to manage simultaneously computing
-tasks for a given user community \cite{WMS}, Request Management System \cite{RMS} managing simple operations, that 
+tasks for a given user community~\cite{WMS}, Request Management System~\cite{RMS} managing simple operations, that 
 are performed asynchronously on behalf of users, and others. 
 
 \section{DIRAC Data Management System}
@@ -112,8 +112,7 @@ tools include many clients for various types of storage. In addition to providin
 the common storage systems, DIRAC also implements its own simple Storage Element. Both technologies are 
 exposed to the users by a uniform API. Many experiments use the LCG
 File Catalog (LFC) through a client API which connects it to the DIRAC system, others are using 
-the DIRACs own File Catalog\footnote{LHCb, the experiment developing DIRAC, uses LFC as its' file catalog 
-\cite{LHCbFC}}. 
+the DIRACs own File Catalog\footnote{LHCb, the experiment developing DIRAC, uses a third party file catalog.}. 
 The Replica Manager class encapsulates all the basic file 
 management operations: uploading, replication, registration. It masks the diversities 
 of different storage systems and can handle several file catalogs at the same time. 
@@ -130,19 +129,19 @@ registered in various storage systems and file catalogs.
 
 Any middleware solution covering the problem of Data Management must have a file catalog enabling the user to  
 find the files he wants to work with, and a replica catalog keeping tracks of file replication.The DIRAC 
-couples these two services into one, introducing the DIRAC File Catalog (DFC)\cite{DFC}. 
-Implemented using the DISET framework (see figure \ref{fig:FCDiag}), the access to DFC is done with an efficient secure 
+couples these two services into one, introducing the DIRAC File Catalog (DFC)~\cite{DFC}. 
+Implemented using the DISET framework (see Figure~\ref{fig:FCDiag}), the access to DFC is done with an efficient secure 
 protocol compliant with the grid security standards.
 The protocol allows also to define access rules for various DFC functionalities based on the user roles. The
 clients are getting the service access details from the common Configuration Service. The DFC behavior
 is monitored using the standard DIRAC Monitoring System and the errors in the service functioning are
 reported to the Logging System. A MySQL database is used to store all the DFC contents (for the scheme of the 
-database, see figure \ref{fig:FCMySQLUML}). 
+database, see Figure~\ref{fig:FCMySQLUML}). 
 
 Following the plug-able module schema, there are many file catalog modules altering its behavior. For example the 
 data files in DFC are stored in a hierarchical directory structure and its implementation depends on the current
 module plugged in the \texttt{dtree} slot in the \texttt{FileCatalogDB} class instance inside the 
-\texttt{FileCatalogHandler} (see figure \ref{fig:FCClasses}). 
+\texttt{FileCatalogHandler} (see Figure~\ref{fig:FCClasses}). 
 
 \begin{figure}[h]
 	\centering

@@ -49,8 +49,8 @@ PCs~\cite{TGrid}.
 
 The operation and functionality of WLCG, as well as other Grid systems, is enabled by specific software packages 
 and protocols, so-called Grid middleware. It manages the basic domains of the Grid functions: job management, 
-data management, security and information services \cite{GriCom}. The term middleware reflects the specific role 
-of this software packages and protocols system: it is a layer between the application area for solving users tasks 
+data management, security and information services~\cite{GriCom}. The term middleware reflects the specific role 
+of this software system: it is a layer between the application area for solving user tasks 
 and the resource area consisting of basic fabric and connectivity layer. 
 
 The vast variety of requirements and needs of the user communities from the four LHC experiments is impossible to 
@@ -65,19 +65,19 @@ individual experiments' computing models.
 
 The DIRAC\footnote{The Distributed Infrastructure with Remote Agent Control} middleware was developed to satisfy
 the needs of not only the LHCb collaboration developing it, but also to enable other smaller experiments to use
-it as their middleware solution. This was achieved by concentrating on modular architecture, which helps with
-adding new features or modifying the systems behavior according to individual experiments needs. 
+it as their middleware solution. This was achieved by focusing on modular architecture that helps when
+adding new features or modifying the systems behavior according to individual experiment's needs. 
 
 DIRAC is constructed from loosely coupled systems where each system manages one part of its functionality. This 
-thesis concentrates on the DIRAC File Catalog, which is part of the Data Management system. This particular system 
-is responsible for data managing tasks across a wide range of distributed storage elements. It also enables users to 
-quickly find and use their files. It is accomplished by maintaining a 
+thesis concentrates on the DIRAC File Catalog, which is a part of the Data Management system. This particular 
+system is responsible for data managing tasks across a wide range of distributed storage elements. It also enables 
+users to quickly find and use their files. It is accomplished by maintaining a 
 directory structure with a similar interface as the UNIX shell and enabling users to define their own metadata
 and use them to search for files.
 
 \section*{Goals of the Thesis}
 
-The first task of this thesis is to upgrade the DIRAC File Catalog by 
+The first task of this thesis is to upgrade the DIRAC File Catalog (DFC) by:
 \begin{itemize}
 \item adding a new module for dataset support, enabling users to bundle their files based on a metadata search 
 (a~metaquery) into a single object,
@@ -93,17 +93,18 @@ collaboration.
 
 \section*{Structure of the Thesis}
 
-In chapter \ref{chap:DIRAC} the DIRAC middleware will be introduced with a focus on the data management part and the 
-file catalog. Afterwards DIRAC will be compared to two other middleware solutions in chapter \ref{chap:relwork}, 
+In Chapter~\ref{chap:DIRAC} the DIRAC middleware will be introduced with a focus on the data management part and the 
+file catalog. Afterwards DIRAC will be compared to two other middleware solutions in Chapter~\ref{chap:relwork}, 
 more specifically ATLAS Distributed Data Management system and ALICE Environment framework.
 
-In the next two chapters our contribution to DIRACs code will be presented. The chapter \ref{chap:MQ} 
-is about the new MetaQuery class and the chapter \ref{chap:Dataset} deals with the Dataset Manager.
+In the next two chapters our contribution to DIRACs code will be presented. The Chapter~\ref{chap:MQ} 
+is about the new MetaQuery class and the Chapter~\ref{chap:Dataset} deals with the Dataset Manager.
 
-In the last part several NoSQL databases are tested in order to pick the one that would be the best for storing
-file metadata (chapter \ref{chap:databases}) and in the chapter \ref{chap:NoSQL} a module created for integrating that 
-database is described. 
+In the last part several NoSQL databases are tested in order to select the one that is the best for storing
+file metadata (Chapter~\ref{chap:databases}) and in the Chapter~\ref{chap:NoSQL} a module created for integrating 
+that database is described. 
 
-Finally, the chapter \ref{chap:user} provides user documentation to all the commands used to interact with the CLI 
-of the DFC used to control any of the parts that were changed by this project. The last chapter
+Finally, the Chapter~\ref{chap:user} provides user documentation to all the commands used to interact with the 
+CLI\footnote{Command Line Interface}
+of the DFC used to control any of the parts that were changed by this project. The last Chapter
 summarizes evaluation of the test results and conclusions.

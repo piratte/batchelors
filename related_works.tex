@@ -1,39 +1,38 @@
-\chapter{Related works}
+\chapter{Related Works}
 \label{chap:relwork}
 
-Currently there are several other middleware projects similar to DIRAC. The DFC was developed by the LHCb experiment 
-collaboration which however has similar needs as the other LHC experiments. Thus, the ATLAS
+Currently there are several other middleware projects similar to DIRAC. The DFC was developed by the LHCb experiment collaboration which, however, has similar needs as other LHC experiments. The ATLAS
 Distributed Data Management system and the AliEn file catalog are the closest comparable solutions.
 
 
 \section{ATLAS DDM}
-The ATLAS experiment at LHC is a general purpose particle detector designed to investigate physics at the energy
+The ATLAS experiment at LHC is a general-purpose particle detector designed to investigate physics at the energy
 frontier. The output data rate, already reduced by the online trigger is  200-400Hz. Even with this reduction 
 ATLAS records a huge amount of data – more than 10PB of raw collision data have been taken since the LHC
-started running. After the first pass of processing was done at CERN, the data is registered in the ATLAS 
-Distributed Data Management system (DDM) \cite{ATLASDDM1}.
+started running in November 2009. After the first pass of processing was done at CERN, the data is registered in 
+the ATLAS Distributed Data Management system (DDM)\cite{ATLASDDM1}.	
 
-Although a basic unit of data in the ATLAS DDM is a file, the basic operational unit is a dataset: they may be
-transferred to the Grid sites, whereas single files may not. There is also one more layer of aggregation called the 
-container, which is a collection of datasets. Datasets may overlap and in practice they do so in a 
-hierarchical manner: production will use small datasets, referring to a few jobs processed at a site. These datasets
-are then aggregated into the main dataset, which refers to a particular task in the ATLAS
+Although a basic unit of data in the ATLAS DDM is a file, the basic operation unit is a dataset: they may be
+transferred to the Grid sites, whereas single files may not. There is also one more layer of aggregation called 
+the container, which is a collection of datasets. Datasets may overlap and in practice they do so in a 
+hierarchical manner: production will use small datasets, referring to a few jobs processed at a site. These 
+datasets are then aggregated into the main dataset that refers to a particular task in the ATLAS
 production system. These main datasets then may be added to a container, where the output of several 
-similar tasks is gathered. Datasets may be opened (new files can be added to them), closed (no new files
-may be added, but could have versions which differ in their file content) and frozen (no new files may be added and 
-no new versions created). 
+similar tasks is gathered. Datasets may be open (new files can be added to them), closed (no new files
+may be added, but can have versions which differ in their content) and frozen (no new files may be added 
+and no new versions created). 
 
 The responsibilities of the ATLAS DDM cover data registration, transfers between sites, file deletion, dataset 
 consistency ensuring (manage file loses on sites), enforcing ATLAS Computing model policies and monitoring. The
-current implementation is called Rucio (previous was DQ2).
+current implementation is called Rucio (the previous one was DQ2).
 
 
 \subsection{Rucio}
-In this implementation files, datasets and containers follow an identical naming scheme which is composed of the
-scope and a name, called a data identifier \cite{ATLAS-Rucio}. Scopes are used to separate production and individual
-users. Metadata associated with a data identifier is represented using attributes (e.g. for a file its availability,
-for a dataset whether it is opened, closed or frozen,...) which are represented as key-value pairs. 
-The set of available attributes is restricted. Some metadata attributes can be set by user, e.g. physics 
+In the current implementation files, datasets and containers follow an identical naming scheme which is composed 
+of the scope and a name, called a data identifier~\cite{ATLAS-Rucio}. Scopes are used to separate production and 
+individual users. Metadata associated with a data identifier is represented using attributes (e.g. for a file its 
+availability, for a dataset whether it is open, closed or frozen,...) which are represented as key-value pairs. 
+The set of available attributes is restricted. Some metadata attributes can be set by a user, e.g. physics 
 attributes (run number). Metadata not set by users include system attributes (size, creation time,...). 
 For datasets and containers it is possible that the value of metadata is a function of the metadata of its
 constituents, e.g. the total size is the sum of the sizes of the constituents.
@@ -43,13 +42,13 @@ storage space addressable within Rucio. It has a unique identifier and a set of 
 protocols, storage type, physical space,...). Physical files stored on RSEs are identified by their Physical File 
 Name (PFN).
 The PFN is a fully qualified path identifying a replica of a file. The mapping between the file identifier and
-the PFN is a deterministic function of the identifier, RSE and protocol. Replica management in Rucio is based on
+the PFN is a function of the identifier, RSE and protocol. Replica management in Rucio is based on
 replication rules defined on data identifier sets. A replication rule is owned by an account and defines the 
 minimum number of replicas to be available on a list of RSEs.
 
 \section{AliEn}
 
-AliEn (ALICE Environment) \cite{AliEn2} is a Grid framework developed by the ALICE
+AliEn (ALICE Environment)~\cite{AliEn2} is a Grid framework developed by the ALICE
 Collaboration and used in production for more than 10 years. 
 
 The AliEn File Catalogue is one of the key components of the AliEn system. It
@@ -62,28 +61,28 @@ IDentifier (GUID).
 
 The interface of the catalogue is a hierarchical structure of directories and
 files, similar to the UNIX file system. The directories and files in the File
-Catalogue have UNIX like privileges.
+Catalogue have UNIX-like privileges.
 
 It also extends the familiar file system paradigm to include information about
 running processes in the system (in analogy to the \texttt{/proc} directory in Linux
 systems). Each job inserted into AliEn Task Queue gets a unique id and a
 corresponding \texttt{/proc/id} directory, where it can register temporary files,
-standard input and output as well as all job products \cite{AliEn1}.
+standard input and output as well as all job products~\cite{AliEn1}.
 
 The File Catalogue is designed to allow each directory node in the hierarchy to
 be supported by different database engines, possibly running on different hosts
 and even having different internal table structures optimized for a particular
 directory branch. 
 
-From the user point of view, the catalogue behaves as a single entity, internally
-it is divided between the LFN and GUID catalogues, which are kept in separate
+From the user point of view, the catalogue behaves as a single entity. Internally
+it is divided between the LFN and GUID catalogues that are kept in separate
 databases. Every LFN database has an index table used to locate the files and
-table that contains all the information about the concrete LFN (owner, group,
-size...).
+a table that contains all the information about the concrete LFN (owner, group,
+size,...).
 
-In addition, there can be some user-defined tables containing metadata.
-AliEn supports file collections.  A file collection is a user defined list of
-entries, which can be either other collections, LFNs or GUIDs. The collection
+In addition, there can be user-defined tables containing metadata.
+AliEn supports file collections.  A file collection is a user-defined list of
+entries that can be either other collections, LFNs or GUIDs. The collection
 mimics a file in the file catalogue, its size is the sum of sizes of
 all its components. If a command is executed over a collection, it will be
 executed on each entry of the collection (e.g. if a user issues a command to
@@ -92,16 +91,16 @@ replicate a collection, all the files of that collection will be replicated).
 \section{Comparison}
 
 The ATLAS DDM is made to be used by the ATLAS collaboration only, so it does not have to cover all the 
-requests from other experiments, e.g. user defined metadata. The DDM also introduces more layers of data structures 
-above files, then just datasets: there are nested datasets and then containers. On the other side, there is no
-structure in the names of datasets and containers, they have just unique identifiers. 
+requests from other experiments, e.g. user-defined metadata. The DDM also introduces more layers of data 
+structures above files: there are datasets, nested datasets and containers. Furthermore, 
+there is no structure in the names of datasets and containers, they have just unique identifiers. 
 
 AliEn is opened for other virtual organizations, however there are only 2 other virtual organizations using 
-AliEn services, while there are more than 15 ones using DIRAC. Because the administration of a whole middleware 
-solution requires high effort, it was proposed to integrate smaller independent DIRAC installations into 
-a single service to optimize operational costs, thus the France-Grilles DIRAC service (FG-DIRAC), 
-after an initial pre-production period of 6 months, was put into production in May 2012 \cite{FGDIRAC}.
-This enabled small user groups, which were not capable of installing, configuring and maintaining  
+AliEn services, while there are more than 15 ones using DIRAC. The administration of the whole middleware 
+solution requires high effort, so a proposition was made to integrate smaller independent DIRAC installations into 
+a single service to optimize operational costs. Thus the France-Grilles DIRAC service, 
+after an initial pre-production period of 6 months, was put into production in May 2012~\cite{FGDIRAC}.
+This enabled small user groups not capable of installing, configuring and maintaining  
 such complex systems as DIRAC, to use it without the need to understand and operate the complex software and
 configurations. From the data management point of view, the  structure is similar: there are files and datasets in a 
 directory structured space, user can define new metadata.

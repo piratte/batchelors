@@ -43,6 +43,7 @@
 %\usepackage{fancyhdr}%,mychapter}
 \usepackage[toc,title,header]{appendix}
 \usepackage[nottoc,notbib,notlof]{tocbibind}
+\usepackage[bottom]{footmisc}
 
 %% Balicky pro pekne vytisteni zdrojoveho kodu
 \usepackage{listings}
@@ -219,7 +220,7 @@ signature of the author
 \setlength\parskip{5mm}
 
 Název práce:
-Optimalizace Zpracování Dat v Systému DIRAC
+Optimalizace zpracování dat v systému DIRAC
 % přesně dle zadání
 
 Autor:
@@ -234,6 +235,8 @@ doc. RNDr. Irena Holubová, Ph.D.
 % dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF UK
 
 Abstrakt:
+Systém DIRAC je softwarový framework poskytující kompletní řešení pro jednu nebo více uživatelských komunit, které 
+potřebují zajistit přístup k distribuovaným výpočetním zdrojům.
 V této práci je rozšířen DIRAC File Catalog (DFC) o modul DatasetManager, přidávající funkcionalitu datasetů 
 definovaných dotazem nad metadaty. K vylepšení práce s dotazy v kódu systému je vyvinuta nová třída MetaQuery,
 která shlukuje obslužné metody a přidává normalizaci a optimalizaci dotazu na vstupu. Jazyk vyjadřující 
@@ -245,7 +248,7 @@ produkčním datům používaných systémem DIRAC. Nejvýkonější databáze n
 použitím nového specializovaného rozhraní.
 
 Klíčová slova:
-System DIRAC, NoSQL databases, efficient processing of data files, metadata querying
+Systém DIRAC, NoSQL databáze, efektivní zpracování datových souborů, dotazování nad metadaty
 
 \vss}\nobreak\vbox to 0.49\vsize{
 \setlength\parindent{0mm}
@@ -268,9 +271,11 @@ doc. RNDr. Irena Holubová, Ph.D.
 % mimo MFF UK v angličtině
 
 Abstract:
-In this thesis the DIRAC File Catalog (DFC) is extended by adding a DatasetManager module thus adding support
-for datasets based on metadata queries. To improve the metaquery handling in the code a new class MetaQuery 
-was implemented, which bundles the handling methods and adds normalization and optimization of the user 
+DIRAC is a software framework for distributed 
+computing providing a complete solution to one (or more) user community requiring access to distributed resources. 
+In this thesis the DIRAC File Catalog (DFC) is extended by adding a DatasetManager module, thus adding support
+for datasets based on metadata queries. To improve the metaquery handling in the code, a new class MetaQuery 
+was implemented that bundles the handling methods and adds normalization and optimization of the user 
 input. The metaquery language was extended enabling logical operators and parenthesis. 
 
 In the second part of the thesis the hypothesis that connecting the metadata part of the DIRAC File Catalog to a 

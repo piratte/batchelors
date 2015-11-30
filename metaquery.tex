@@ -84,12 +84,13 @@ as expected (AND operators are inserted in the
 correct places). However when the user uses at least one logical operator, no additional insertions are made
 and the rest of the input has to be a well formed formula. 
 
-Once the query string is tokenized, it has to be converted into DNF and optimized to gain the metaquery 
-properties. Every formula can be transferred to DNF and  method \texttt{setMetaQuery} takes care of it and also 
-calls a private method for optimization.
+Once the query string is tokenized, it has to be converted into DNF (see Algorithm~\ref{alg:ToDNF}) and optimized 
+to gain the metaquery properties. Every formula can be transferred to DNF and  method \texttt{setMetaQuery} takes 
+care of it and also calls a private method for optimization.
 
 \begin{algorithm}[h]
 \caption{Convert the tokenized input string into a query in DNF}
+\label{alg:ToDNF}
 \begin{algorithmic}[1]
 \Procedure{ToDnf}{inputList}
 \State \textit{termTmp} = [ ]; \textit{last} = [ ]
@@ -144,7 +145,7 @@ To provide a correct input is a major challenge of the Metaquery class, although
 catalog features metaqueries is evidently the search for files. For files already stored in databases the DIRAC
 project tries to leave as much work as possible on the database, so the only thing to solve in this area is the 
 interface between the database and the file catalog (the conversion between the Metaquery class and the databases
-query language). This problem is tackled in the chapter \ref{chap:databases}. 
+query language). This problem is tackled in the Chapter~\ref{chap:databases}. 
 
 Applying the metaquery to a particular
 set of metadata (for instance when a new file is uploaded to the file catalog) is handled by the Metaquery class 

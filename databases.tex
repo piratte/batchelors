@@ -1,4 +1,4 @@
-\chapter{Choosing the NoSQL database}
+\chapter{Choosing the NoSQL Database}
 \label{chap:databases}
 One of the main goals of this project was to test whether connecting the 
 file catalog, more specifically its metadata part, to a NoSQL database would 
@@ -8,7 +8,7 @@ following conditions in order to be connectable to DIRAC and deployable in
 the computing centers
 
 \begin{itemize}
-\item there has to be a freeware version which could DIRAC use,
+\item a freeware version has to be available for DIRAC,
 \item the database has to have a python interface or client so it would be easy
 to incorporate into the DIRACs code.
 \end{itemize}
@@ -21,31 +21,68 @@ identified by an ID. On the contrary, the files are fetched based on the terms i
 all the querying techniques the metaquery could use have to be possible, including
 range queries. 
 
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.9]{dataTyp.pdf}
-\label{fig:theoDataScheme}
-\caption{Theoretical data scheme in the metadata catalog}
-\end{figure}
+%\begin{figure}[h]
+%\centering
+%\includegraphics[scale=0.9]{dataTyp.pdf}
+%\label{fig:theoDataScheme}
+%\caption{Theoretical data scheme in the metadata catalog}
+%\end{figure}
 
 
 \section{Apache Cassandra}
-Apache Cassandra is a distributed database for managing large amounts of structured data 
-across many commodity servers, while providing highly available service and no single point 
-of failure \cite{cassandra}. Cassandra's data model is a
+Apache Cassandra\footnote{\url{http://cassandra.apache.org/}} is a distributed database for managing large amounts 
+of structured data across many commodity servers, while providing highly available service and no single point 
+of failure~\cite{cassandra}. Cassandra's data model is a
 partitioned row store, rows are organized into tables. Each row
 has an altering number of columns identified by a unique ID, which are essentially a
 key-value pair. Adding that Cassandra features
 its own query language CQL (Cassandra Query Language) which resembles the standard SQL 
-used by all relational databases, it looks like a perfect candidate for the metadata catalog.
+used by all relational databases, it seems to be a perfect candidate for the metadata catalog.
 
 \subsection{Developing a Data Model for Cassandra}
 
-Although CQL makes it look like a relational database, the developer has to bare in mind, that
+\begin{table}[t]
+\parbox{.45\linewidth}{
+\begin{tabular}{|l|l|ll}
+\hline
+\multirow{2}{*}{Meta1} & 123     & \multicolumn{1}{l|}{200}     & \multicolumn{1}{l|}{4000}  \\ \cline{2-4} 
+                       & \{1\}   & \multicolumn{1}{l|}{\{3\}}   & \multicolumn{1}{l|}{\{2\}} \\ \hline
+\multirow{2}{*}{Meta2} & 'alpha' & \multicolumn{1}{l|}{'delta'} &                            \\ \cline{2-3}
+                       & \{1\}   & \multicolumn{1}{l|}{\{2\}}   &                            \\ \cline{1-3}
+\multirow{2}{*}{Meta3} & 0       & \multicolumn{1}{l|}{1}       &                            \\ \cline{2-3}
+                       & \{1,2\} & \multicolumn{1}{l|}{\{3\}}   &                            \\ \cline{1-3}
+\multirow{2}{*}{Meta4} & 'beta'  &                              &                            \\ \cline{2-2}
+                       & \{2\}   &                              &                            \\ \cline{1-2}
+\end{tabular}
+\caption{First data model using Cassandra. The FileID is in the first column (row key), the next columns are metanames and their 
+values.}
+\label{tab:Cass1}
+}
+\hfill
+\parbox{.45\linewidth}{
+\centering
+\begin{tabular}{|l|l|ll}
+\hline
+\multirow{2}{*}{Meta1} & 123     & \multicolumn{1}{l|}{200}     & \multicolumn{1}{l|}{4000}  \\ \cline{2-4} 
+                       & \{1\}   & \multicolumn{1}{l|}{\{3\}}   & \multicolumn{1}{l|}{\{2\}} \\ \hline
+\multirow{2}{*}{Meta2} & 'alpha' & \multicolumn{1}{l|}{'delta'} &                            \\ \cline{2-3}
+                       & \{1\}   & \multicolumn{1}{l|}{\{2\}}   &                            \\ \cline{1-3}
+\multirow{2}{*}{Meta3} & 0       & \multicolumn{1}{l|}{1}       &                            \\ \cline{2-3}
+                       & \{1,2\} & \multicolumn{1}{l|}{\{3\}}   &                            \\ \cline{1-3}
+\multirow{2}{*}{Meta4} & 'beta'  &                              &                            \\ \cline{2-2}
+                       & \{2\}   &                              &                            \\ \cline{1-2}
+\end{tabular}
+\caption{Second Cassandra scheme. FileIDs are now in sets in column values, metanames are row keys and metavalues are columns names.}
+\label{tab:fileMeta}
+}
+\end{table}
+
+Although CQL makes it look like a relational database, the developer has to keep in mind that
 Cassandra is different. Our first scheme used the altering number of columns and organized the 
-data in tables, where each file or directory had its own row with metanames being the column
-names and values being the column values (this model strongly resembles the theoretical data 
-scheme in figure \ref{fig:theoDataScheme}) with secondary indexes over column values so that 
+data in tables, where each file or directory had its own row with metanames as column
+names and values as column values (see Table~\ref{tab:Cass1}).
+%(this model strongly resembles the theoretical data scheme in Figure~\ref{fig:theoDataScheme}). 
+Secondary indices were created over column values so that 
 the query would be possible. Although CQLs' similarity with SQL would suggest otherwise, 
 it turned out that this kind of indexing does not support range queries so this data-model
 had to be abandoned. 
@@ -54,27 +91,31 @@ After understanding more thoroughly how Cassandra works, another data-model was 
 utilizing most of Cassandra specific features. The key properties Cassandra guaranties are that 
 rows are not divided across multiple nodes in the cluster and column keys inside the row
 are sorted. Based on these two characteristics a functioning data model was created. For  
-directories row IDs are mapped on directory IDs and the model is similar to the previous one. 
-Retrieving a row with given row ID is one of the supported operations.
+directories row IDs are mapped on directory IDs and the model the same as the previous one. 
+Retrieving a row with a given row ID is one of the supported operations.
 For files each metaname has its row, column names are meta values and column values are sets of 
-file IDs of files having this metaname and value associated with them. 
+fileIDs of files having this metaname and value associated with them (see Table~\ref{tab:fileMeta}). 
 
-\begin{table}[h]
-\centering
-\begin{tabular}{|l|l|l|l|ll}
-\hline
-\multirow{2}{*}{Metaname A} & Value 1      & Value 2      & Value 3      & \multicolumn{1}{l|}{Value 4}      & \multicolumn{1}{l|}{Value 5}      \\ \cline{2-6}
-                            & \{id,id,..\} & \{id,id,..\} & \{id,id,..\} & \multicolumn{1}{l|}{\{id,id,..\}} & \multicolumn{1}{l|}{\{id,id,..\}} \\ \hline
-\multirow{2}{*}{Metaname B} & Value 1      & Value 2      & Value 3      &                                   &                                   \\ \cline{2-4}
-                            & \{id,id,..\} & \{id,id,..\} & \{id,id,..\} &                                   &                                   \\ \cline{1-4}
-\end{tabular}
-\caption{File metadata}
-\label{tab:fileMeta}
-\end{table}
+%\begin{table}[t]
+%\centering
+%\begin{tabular}{|l|l|ll}
+%\hline
+%\multirow{2}{*}{Meta1} & 123     & \multicolumn{1}{l|}{200}     & \multicolumn{1}{l|}{4000}  \\ \cline{2-4} 
+%                       & \{1\}   & \multicolumn{1}{l|}{\{3\}}   & \multicolumn{1}{l|}{\{2\}} \\ \hline
+%\multirow{2}{*}{Meta2} & 'alpha' & \multicolumn{1}{l|}{'delta'} &                            \\ \cline{2-3}
+%                       & \{1\}   & \multicolumn{1}{l|}{\{2\}}   &                            \\ \cline{1-3}
+%\multirow{2}{*}{Meta3} & 0       & \multicolumn{1}{l|}{1}       &                            \\ \cline{2-3}
+%                       & \{1,2\} & \multicolumn{1}{l|}{\{3\}}   &                            \\ \cline{1-3}
+%\multirow{2}{*}{Meta4} & 'beta'  &                              &                            \\ \cline{2-2}
+%                       & \{2\}   &                              &                            \\ \cline{1-2}
+%\end{tabular}
+%\caption{File metadata}
+%\label{tab:fileMeta}
+%\end{table}
 
 The rows are grouped in tables by value type, because the algorithm used to sort the
 column names is unified per table. There is also an index over fileID sets, 
-so that retrieving all metadata for one specific file is possible, but the scheme is 
+so that retrieving all metadata for one specific file is possible. However the scheme is 
 not optimized for this operation, because this is done only for the users information and
 when setting new metadata.
 
@@ -91,13 +132,13 @@ CREATE TABLE file_int (
 \label{lis:CQLstruct}
 \end{listing}
 
-In CQL this structure looks like a table with three columns and a compound primary key (see listing 
-\ref{lis:CQLstruct}). 
+In CQL this structure looks like a table with three columns and a compound primary key (see 
+Listing~\ref{lis:CQLstruct}). 
 This brings the main disadvantage of this approach: meta names can be queried only one at a time and
-the result has to be then finalized in the DIRACs code. Because the expected structure of data could
-suggest, that files satisfying only a part of the metaquery could be many, the idea of using 
-Cassandra as the File Catalogs database was dropped, because fetching multiple times a large number of 
-files from the database and then doing a intersection in the python code is clearly not optimal. 
+the result has to be then finalized in the DIRACs code. The expected structure of data could
+suggest that the number of files satisfying only a part of the metaquery can be large, the idea of using 
+Cassandra as the File Catalog database was forgot, because fetching multiple times a large number of 
+files from the database and then doing a intersection in the python code is not optimal. 
 
 %\begin{listing}
 %\begin{minted}{sql}
@@ -138,7 +179,7 @@ familiar as Cassandras columns, but it turned out to be even easier to use.
 \subsection{MongoDB}
 
 Mongo is a open-source document-oriented database storing JSON files. As of November 2015, MongoDB is the fourth 
-most popular type of database management system, and the most popular for document stores \cite{MongoPop}. 
+most popular type of database management system, and the most popular for document stores~\cite{MongoPop}. 
 In MongoDB the document is the basic unit, documents are grouped into collections, which can be thought of as 
 a table with a dynamic schema. Single instance of MongoDB can have multiple databases, each can host multiple 
 collections. In collections documents are identified using a special field \texttt{\_id} which has to be unique
@@ -161,7 +202,7 @@ Overall the database is easy to use and administer thanks to many well documente
 
 There are two types
 of configuration files supported by MongoDB: the older one in form of \texttt{<setting> = <value>} and the 
-newer in YAML format \cite{YAML}. The database ships with the older one (although it is not developed since version 2.4), but
+newer in YAML format~\cite{YAML}. The database ships with the older one (although it is not developed since version 2.4), but
 most of the configuration documentation is in the newer one (and some of the new features can be only set in 
 YAML format) so the administrator should convert it manually before using the database since it could ease up
 the usage and optional re-configuration later.
@@ -172,7 +213,7 @@ takes time, but also consumes disk space (more thorough explanation of this prob
 
 \subsection{Elasticsearch}
 
-Elasticsearch (ES) is a real-time distributed open-source analytics and search engine \cite{ESBook}, 
+Elasticsearch (ES) is a real-time distributed open-source analytics and search engine~\cite{ESBook}, 
 built on top of Apache Lucene\footnote{\url{https://lucene.apache.org/}}. Unlike very complex Lucene, 
 ES features a simple RESTful API that makes it easy to use. Moreover it could be used not only 
 for full-text search, but for real-time analytics or, which is important for this project, as a 
@@ -238,7 +279,7 @@ queries was generated. When testing one database, all other database services we
 interfere with the test. To effectively search for data in MongoDB the document properties have to be 
 indexed manually. Indexes were made on several integer fields (testInt1-8) and three string fields 
 (testStr1,testStr2,testStr3). The time cost of building\footnote{for the default storage engine} the 
-indexes and their space requirements are listed in table \ref{tab:indexBuildTimes}.
+indexes and their space requirements are listed in Table~\ref{tab:indexBuildTimes}.
 
 \begin{table}[h]
 \centering
@@ -266,7 +307,7 @@ Elasticsearch does not have a similar limitation, however the queries were kept
 the same so that the comparison is as correct as possible.
 
 The queries were generated randomly combining the integer and string properties. The number of hits was not 
-considered while generating the queries. All the queries used can be seen in appendix \ref{app:queries}.
+considered while generating the queries. All the queries used can be seen in Appendix~\ref{app:queries}.
 
 The program testing the performance is a python script running on a personal computer in the same LAN as the 
 database machine (similarly to the expected deployment of the service). The measured time is the interval between 
@@ -274,7 +315,7 @@ the moment the query was submitted, to the moment the results were extracted to 
 preparation of the query, nor the printing of the results were included in the final time. 
 
 For Elasticsearch the cache of the index was flushed after every query to keep the results consistent (although as 
-figure \ref{fig:EScache} suggests, flushing the cache does not make a notable difference for bigger data volumes). 
+Figure~\ref{fig:EScache} suggests, flushing the cache does not make a notable difference for bigger data volumes). 
 
 \begin{figure}[h]
 	\centering
@@ -289,7 +330,7 @@ The original MongoDB instance was using the default storage engine used by versi
 Storage Engine based on memory mapped files}. There is also a new storage engine WiredTiger\footnote{
 \url{https://docs.mongodb.org/manual/core/wiredtiger/}} available and their performances were compared.
 Moreover the new engine brings the option of choosing the compression strategy. The comparison of disk space usage 
-can be seen in table \ref{tab:MongoComp} and query performance in figure \ref{fig:MDBcomparison}.
+can be seen in Table~\ref{tab:MongoComp} and query performance in Figure~\ref{fig:MDBcomparison}.
 
 \begin{table}[t]
 \centering
@@ -318,7 +359,7 @@ compression used. All sizes are in MB.}
 \end{figure}
 
 We can conclude: if the administrator does not have a critically low amount of disk space available, MongoDB
-works best with the new WiredTiger storage engine with default compression. In figure \ref{fig:DBscomparison} we 
+works best with the new WiredTiger storage engine with default compression. In Figure~\ref{fig:DBscomparison} we 
 can see the comparison of performance on the sample queries between the WiredTiger configuration of MongoDB and 
 Elasticsearch. 
 
@@ -332,7 +373,7 @@ Elasticsearch.
 
 The queries on MongoDB are taking much more time than on Elasticsearch. MongoDB provides
 a tool for explaining query execution. This comes in very useful when trying to investigate efficiency problems
-like this one. In the listing in appendix \ref{app:MDB}, one can see the output of the command for one of the 
+like this one. In the listing in Appendix~\ref{app:MDB}, one can see the output of the command for one of the 
 sample queries. The query planner tries all the indexes associated with one of the queried properties, then 
 picks one and based on just this one performs the search. The search results are then filtered so that the 
 returned 
@@ -348,15 +389,15 @@ indexes were created for each query and the performance was tested using these i
 	\label{fig:MDBcompound}
 \end{figure}
 
-Creating an index for each query is not the preferred usage pattern in this case. Also figure 
-\ref{fig:MDBcompound} clearly states that even with these specialized indexes MongoDB shows worse performance 
+Creating an index for each query is not the preferred usage pattern in this case. Also Figure~\ref{fig:MDBcompound} 
+clearly states that even with these specialized indexes MongoDB shows worse performance 
 than Elasticsearch, although there is a great improvement when compared to the version without the new indexes.  
 
-\subsection{The comparison between NoSQL and the Current Deployment}
+\subsection{The Comparison Between NoSQL and the Current Deployment}
 
 Currently the database back-end to all the services in DIRAC, where a database is needed including the File 
 Catalog and its metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen 
-in figure \ref{fig:DFCUML}.
+in Figure~\ref{fig:DFCUML}.
 
 \begin{figure}[h]
 	\centering
@@ -377,8 +418,8 @@ the whole dataset in memory and did not have to use the disk when executing the 
 behavior, because the database engine will most likely not serve only the DFC metadata catalog, so there will not
 be enough memory space to keep all the metadata in cache. To test how the database could behave in production, the 
 command \texttt{flush tables;} was used after every query to dump the cached tables. Also the whole dataset
-was inserted into the database. This also let us to compare the size of data indexed by MySQL and by NoSQL (table 
-\ref{tab:allDbSizes}). 
+was inserted into the database. This also let us to compare the size of data indexed by MySQL and by NoSQL (
+Table~\ref{tab:allDbSizes}). 
 
 \begin{table}[h]
 \centering
@@ -401,7 +442,7 @@ To test the databases more thoroughly a new set of queries was created. These qu
 small set of metafields indexed by the MongoDB. The MySQL on this set proved itself better on queries consulting
 a lesser number of metafields and a larger number of hits. Performance of Elasticsearch seems to be proportionate
 to the number of hits while the complexity of the query does not seem to have an effect on its speed (results in 
-figure \ref{fig:wide}).
+Figure~\ref{fig:wide}).
 
 \begin{figure}[h]
 	\centering

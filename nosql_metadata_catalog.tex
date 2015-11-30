@@ -10,7 +10,7 @@ Elasticsearch.
 The current query search algorithm cuts the query per element of the disjunction. With each element the Catalog
 finds directories satisfying the directory part of the query, then it finds the files satisfying the file part. 
 With the list of files and list of directories it filters out the files that are not in the sub-tree of one of the
-satisfying directories (the algorithm is described by algorithm \ref{alg:find}).
+satisfying directories (the algorithm is described by Algorithm~\ref{alg:find}).
 
 \begin{algorithm}[h]
 \caption{Find files satisfying query}
@@ -37,12 +37,12 @@ is handled by \texttt{fmeta}). This can result in unnecessary fetching of files,
 they happen to be located in a directory that does not satisfy the query. This is especially relevant because as
 the tests done by this project suggest the query speed of Elasticsearch unlike MySQL depends mainly on the
 number of hits it has to retrieve and
-not on the complexity of the query (see figure \ref{fig:wide}). 
+not on the complexity of the query (see Figure~\ref{fig:wide}). 
 
 The solution could be letting database engine deal 
 with the complexity of the search algorithm. This would mean storing all the metadata associated with a file (its' 
 own as well as the ones inherited from the directory structure) in the files document. This would increase
-disk space (but as table \ref{tab:allDbSizes} suggests, Elasticsearch is much more space efficient when compared 
+disk space (but as Table~\ref{tab:allDbSizes} suggests, Elasticsearch is much more space efficient when compared 
 to MySQL) as well as the difficulty of metadata management. The inheritance of metadata through the directory 
 structure has to be maintained when setting and unsetting them. The result would be that finding files would 
 only consist of translating the metaquery from the internal representation to an Elasticsearch compatible form 
