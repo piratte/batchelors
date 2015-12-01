@@ -36,13 +36,13 @@ basic CRUD operations with some additions.
 
 \subsection{Releasing and Freezing a Dataset}
 
-When a dataset is created an entry is inserted to the database. It contains the dataset name, id, metaquery, 
+When a dataset is created, an entry is inserted to the database. It contains the dataset name, id, metaquery, 
 status, id of the directory it is located in, UID and GID of the user who created it and some other 
 properties. When a dataset is frozen, the query is evaluated and all the files, which the
 dataset contains, are associated with it (the records are inserted in the table \texttt{FC\_MetaDatasetFiles}).
 Releasing the dataset only deletes these records and updates the cached properties. 
 
-When a dataset is deleted its record in the database is removed. Moreover when the deleted dataset is frozen
+When a dataset is deleted, its record in the database is removed. Moreover when the deleted dataset is frozen
 it is requested it would be deleted with the files it contains not including files contained by another frozen
 dataset. This is done using one select
 

@@ -5,11 +5,11 @@ The queries are written in JSON form for convinience: a one level JSON is essent
 python dictionary data structure. When creating a meaningful query from the JSON the following algorithm is used:
 
 \begin{itemize}
-	\item If the current key contains the substring \texttt{Int}, then according to the projects' 
+	\item if the current key contains the substring \texttt{Int}, then according to the projects' 
 		conventions the field represents an integer typed metafield. The query condition in this case is 
-		\texttt{[key] > [value]}.
-	\item Otherwise (key contains substring \texttt{Str}) the field represents a string metafield adn the condition
-		is \texttt{[key] = [value]}	
+		\texttt{[key] > [value]},
+	\item otherwise (key contains substring \texttt{Str}) the field represents a string metafield adn the condition
+		is \texttt{[key] = [value]}.
 \end{itemize}
 
 

@@ -52,7 +52,7 @@ used by all relational databases, it seems to be a perfect candidate for the met
 \multirow{2}{*}{3} & Meta1 & Meta3   &                            &                             \\ \cline{2-3}
                    & 200   & 1       &                            &                             \\ \cline{1-3}
 \end{tabular}
-\caption{First data model using Cassandra. The FileID is in the first column (row key), the next columns are metanames and their 
+\caption{The first data model using Cassandra. The FileID is in the first column (row key), the next columns are metanames and their 
 values.}
 \label{tab:Cass1}
 }
@@ -70,7 +70,7 @@ values.}
 \multirow{2}{*}{Meta4} & 'beta'  &                              &                            \\ \cline{2-2}
                        & \{2\}   &                              &                            \\ \cline{1-2}
 \end{tabular}
-\caption{Second Cassandra scheme. FileIDs are now in sets in column values, metanames are row keys and metavalues are columns names.}
+\caption{The second Cassandra scheme. FileIDs are now in sets in column values, metanames are row keys and metavalues are columns names.}
 \label{tab:fileMeta}
 }
 \end{table}
@@ -256,7 +256,7 @@ The data was stored in two CSV files with lines \texttt{id,metaname,value} and t
 \subsection{Loading the Big Data}
 
 Both databases feature bulk loading functionality. Although the user will not probably use it, in
-this project, which involved testing the databases on a large data, the loading of the them was one 
+this project, which involved testing the databases on a large data, the loading of them was one 
 of the challenges.
 
 ES python interface features a bulk load function (the default data chunk size is 500 records). 

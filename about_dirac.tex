@@ -1,4 +1,4 @@
-\chapter{DIRAC - The Distributed Infrastructure with Remote Agent Control}
+\chapter{DIRAC System}
 \label{chap:DIRAC}
 
 The LHCb Collaboration~\cite{LHCb} is running one of the four large experiments at the LHC particle 
@@ -50,12 +50,12 @@ components, usually running close to the corresponding services, watching for ch
 reacting accordingly by initiating actions like job submission or result retrieval. 
 
 \item[Interfaces] \hfill \\
-The DIRAC functionality is exposed to the system developers and to the users in a variety of ways. 
+The DIRAC functionality is exposed to the system developers and to the users in a variety of ways:
 	\begin{itemize}
-		\item The DIRAC programming language is python, so the programming interfaces (APIs) are available in this 
-			language
-		\item For users the DIRAC functionality is available through a command line interface. Some subsystems 		
-			have specialized shells to work with.
+		\item the DIRAC programming language is python, so the programming interfaces (APIs) are available in this 
+			language,
+		\item for users the DIRAC functionality is available through a command line interface. Some subsystems 		
+			have specialized shells to work with,
 		\item DIRAC also provides a web interface suitable for monitoring and managing the system behavior.
 	\end{itemize}
 
@@ -178,7 +178,7 @@ the information about the wanted storage element (SE) is available. In such a ca
 the fly and when the SE description changes, e.g. its access point, it is enough to change the SE description in the DIRAC 
 Configuration System to continue receiving correct PFNs. Support for managing various user and group usage 
 quotas is also implemented. Another feature supported by the Catalog based on the experience in 
-the HEP\footnote{High Energy Physics} experiments is to store and provide information about ancestor-descendant 
+the HEP experiments is to store and provide information about ancestor-descendant 
 relations between files. 
 
 \subsection{Metadata Catalog}
