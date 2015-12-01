@@ -43,16 +43,14 @@ used by all relational databases, it seems to be a perfect candidate for the met
 
 \begin{table}[t]
 \parbox{.45\linewidth}{
-\begin{tabular}{|l|l|ll}
-\hline
-\multirow{2}{*}{Meta1} & 123     & \multicolumn{1}{l|}{200}     & \multicolumn{1}{l|}{4000}  \\ \cline{2-4} 
-                       & \{1\}   & \multicolumn{1}{l|}{\{3\}}   & \multicolumn{1}{l|}{\{2\}} \\ \hline
-\multirow{2}{*}{Meta2} & 'alpha' & \multicolumn{1}{l|}{'delta'} &                            \\ \cline{2-3}
-                       & \{1\}   & \multicolumn{1}{l|}{\{2\}}   &                            \\ \cline{1-3}
-\multirow{2}{*}{Meta3} & 0       & \multicolumn{1}{l|}{1}       &                            \\ \cline{2-3}
-                       & \{1,2\} & \multicolumn{1}{l|}{\{3\}}   &                            \\ \cline{1-3}
-\multirow{2}{*}{Meta4} & 'beta'  &                              &                            \\ \cline{2-2}
-                       & \{2\}   &                              &                            \\ \cline{1-2}
+\begin{tabular}{|l|l|l|ll}
+\cline{1-4}
+\multirow{2}{*}{1} & Meta1 & Meta2   & \multicolumn{1}{l|}{Meta3} &                             \\ \cline{2-4}
+                   & 123   & 'alpha' & \multicolumn{1}{l|}{0}     &                             \\ \hline
+\multirow{2}{*}{2} & Meta1 & Meta2   & \multicolumn{1}{l|}{Meta3} & \multicolumn{1}{l|}{Meta4}  \\ \cline{2-5} 
+                   & 4000  & 'delta' & \multicolumn{1}{l|}{0}     & \multicolumn{1}{l|}{'beta'} \\ \hline
+\multirow{2}{*}{3} & Meta1 & Meta3   &                            &                             \\ \cline{2-3}
+                   & 200   & 1       &                            &                             \\ \cline{1-3}
 \end{tabular}
 \caption{First data model using Cassandra. The FileID is in the first column (row key), the next columns are metanames and their 
 values.}
@@ -137,8 +135,8 @@ Listing~\ref{lis:CQLstruct}).
 This brings the main disadvantage of this approach: meta names can be queried only one at a time and
 the result has to be then finalized in the DIRACs code. The expected structure of data could
 suggest that the number of files satisfying only a part of the metaquery can be large, the idea of using 
-Cassandra as the File Catalog database was forgot, because fetching multiple times a large number of 
-files from the database and then doing a intersection in the python code is not optimal. 
+Cassandra as the File Catalog database was abandoned, because fetching multiple times a large number of 
+files from the database and then doing an intersection in the python code is not optimal. 
 
 %\begin{listing}
 %\begin{minted}{sql}
@@ -152,47 +150,46 @@ files from the database and then doing a intersection in the python code is not 
 
 \section{Document Databases}
 
-Both following databases are document-oriented and the data scheme is fairly similar in both
-of them. A document-oriented database replaces the concept of a \textit{row} from the world of relational 
+A document-oriented database replaces the concept of a \textit{row} from the world of relational 
 databases with a more dynamic and versatile \textit{document}. By allowing arrays and embedded documents the 
-document-oriented databases provide de-normalization of the data and of complex 
-relationships in a single document. Also there are no predefined schemes, which is essential for our project because 
+document-oriented databases provide de-normalization of the data and complex 
+relationships in a single document. Also there are no predefined schemes, which is essential for our project, because 
 the number of associated metadata varies between 
-files. The metadata are stored in a JSON structure with fields being meta names, indexes above properties and key 
-mapped to the dir or file ID.
+files. The metadata are stored in simple a JSON structure with names being metanames (see Listing~\ref{lis:json}).
 
-
-\begin{minted}{json}
+\begin{listing}[t]
+\begin{lstlisting}
 {
 	'id'       : id
 	'metaInt1' : 1,
 	'metaStr1' : 'qwerty',
 	'metaInt3' : 123
 }
-\end{minted}
+\end{lstlisting}
+\caption{Metadata stored in a document database. This is a basic example, there can be many more fields in the JSON structure, but it will always remain a simple structure.}
+\label{lis:json}
+\end{listing}
 
-
-Document databases were not the first pick during developing this project, because the idea of
-storing metadata in a JSON structure and then building indexes above the properties is not as
-familiar as Cassandras columns, but it turned out to be even easier to use.
+Document databases were not the first choice during developing this project, because the idea of
+storing metadata in a JSON structure and then building indices above the properties is not as
+familiar as Cassandras columns. But it turned out to be even easier to use.
 
 \subsection{MongoDB}
 
-Mongo is a open-source document-oriented database storing JSON files. As of November 2015, MongoDB is the fourth 
+MongoDB is an open-source document-oriented database storing JSON files. Currently, in November 2015, MongoDB is the fourth 
 most popular type of database management system, and the most popular for document stores~\cite{MongoPop}. 
-In MongoDB the document is the basic unit, documents are grouped into collections, which can be thought of as 
-a table with a dynamic schema. Single instance of MongoDB can have multiple databases, each can host multiple 
-collections. In collections documents are identified using a special field \texttt{\_id} which has to be unique
-within a collection\cite{MongoBook} (this projects maps the file or directory ids from the file catalog 
-to this id field) .
+In MongoDB the document is the basic unit, documents are grouped into collections. A single instance of MongoDB can host
+multiple databases, each grouping together multiple collections. In collections documents are identified using a special 
+field \texttt{\_id} which has to be unique within a collection~\cite{MongoBook}. This projects maps the file or directory 
+ids from the file catalog to this id field.
 
 \subsubsection{Using MongoDB}
 
-On Scientific Linux it could be installed from a package so the initial set up is rather easy.
+On Scientific Linux it can be installed from a package so the initial set up is rather easy.
 MongoDB comes with its own shell based on
 JavaScript, which the administrator can use to query and update data as well as perform administrative 
-operations\footnote{\url{https://docs.mongodb.org/getting-started/shell/client/}}. This client is rather easy to
-use and the commands used in it are very similar to those used by the python library. The mongo
+operations\footnote{\url{https://docs.mongodb.org/getting-started/shell/client/}}. The client is rather easy-to-use 
+and its commands are very similar to those used by the python library. The mongo
 package also contains several tools for monitoring the database
 including the \texttt{mongotop}\footnote{\url{https://docs.mongodb.org/manual/reference/program/mongotop/}} 
 and \texttt{mongostat}\footnote{\url{https://docs.mongodb.org/manual/reference/program/mongostat/}}, and several 
@@ -202,21 +199,22 @@ Overall the database is easy to use and administer thanks to many well documente
 
 There are two types
 of configuration files supported by MongoDB: the older one in form of \texttt{<setting> = <value>} and the 
-newer in YAML format~\cite{YAML}. The database ships with the older one (although it is not developed since version 2.4), but
-most of the configuration documentation is in the newer one (and some of the new features can be only set in 
-YAML format) so the administrator should convert it manually before using the database since it could ease up
+newer using YAML format~\cite{YAML}. The database comes with the older one (although it is not developed since version 
+2.4), but most of the configuration documentation is in the newer one (and some of the new features can be only set in 
+YAML format) so the administrator should convert it manually before using the database since it could ease
 the usage and optional re-configuration later.
 The major drawback when using this database is that every property has to be indexed manually, which not only 
-takes time, but also consumes disk space (more thorough explanation of this problem later).
+takes time, but also consumes disk space.
 
 % When querying in a collection that does not exist, there is no error, just no result, which can be confusing
 
 \subsection{Elasticsearch}
 
-Elasticsearch (ES) is a real-time distributed open-source analytics and search engine~\cite{ESBook}, 
+Elasticsearch (ES)\footnote{\url{https://www.elastic.co/products/elasticsearch}} is a real-time distributed open-source 
+analytics and search engine~\cite{ESBook} 
 built on top of Apache Lucene\footnote{\url{https://lucene.apache.org/}}. Unlike very complex Lucene, 
-ES features a simple RESTful API that makes it easy to use. Moreover it could be used not only 
-for full-text search, but for real-time analytics or, which is important for this project, as a 
+ES features a simple RESTful API that makes it easy to use. Moreover it can be used not only 
+for full-text search, but also for real-time analytics or, which is important for this project, as a 
 distributed document store, where \textit{every} field is indexed and searchable. Its python 
 client\footnote{\url{http://elasticsearch-py.readthedocs.org/en/master/}} provides a wrapper for the RESTful API
 as well as some useful additional commands called helpers (e.g. for bulk loading data, the command 
@@ -224,15 +222,16 @@ as well as some useful additional commands called helpers (e.g. for bulk loading
 
 \subsubsection{Using ES}
 
-As well as MongoDB, Elasticsearch comes in a package. The installation set reasonable 
+Like MongoDB, Elasticsearch comes in a package. The installation set reasonable 
 defaults (the only thing that was changed on the testing server was the data directory and listening on the 
-universal IP address had to be enabled, default is only local host). The 
+universal IP address had to be enabled, because the default is only local host). The 
 configuration file is in YAML format. There is no need for any initial data structure,
 the first data is simply inserted using the correct URL\footnote{\url{http://host:port/index/doc_type/doc_id}
 is the URL the RESTful API uses, when using the python library \texttt{index, doc\_type}\texttt{doc\_id} are 
-specified using the function arguments}. ES structures data in indexes and types (hence the \texttt{index} and
-\texttt{doc\_type} in the command). An Elasticsearch cluster can contain multiple indexes, which can contain 
-multiple types (there is a rough parallel with the world of relational databases, where indexes would be databases 
+specified using the function arguments}. In ES, a document belongs to a type and types are contained by indices 
+(hence the \texttt{index} and \texttt{doc\_type} in the command). 
+An Elasticsearch cluster can contain multiple indices, which can contain 
+multiple types (there is a rough parallel with the world of relational databases, where indices would be databases 
 and types would correspond to tables). Unlike the relational databases ES can create the index and type with the 
 first inserted document using its default configuration.
 
@@ -240,19 +239,19 @@ first inserted document using its default configuration.
 
 \section{Database Tests}
 
-For testing, a single IBM iDataPlex dx340 server was used, equipped with 2x (Intel Xeon 5440 with 4 cores), 16GB
+For testing, a single IBM iDataPlex dx340 server was used, equipped with 2x Intel Xeon 5440 with 4 cores, 16GB
 of RAM and 300GB SAS hard disk, where all the database files were stored. After several smaller datasets, 
-the main testing data was generated trying to mimic the DIRAC production data structure. There is expected to
-be over 10 million files with approximately 20 different meta names.
-The set generated had $(10 000 000 - 1)$ files with $1$ to $998$ metanames associated with them\footnote{ 
+the main testing data was generated trying to mimic the DIRAC production data structure. There is expected 
+over 10 million files with approximately 20 different meta names.
+The generated set had $(10 000 000 - 1)$ files with $1$ to $998$ metanames associated with them\footnote{ 
 The generator chose a randomly $1$ to $499$ integer metrics and the same number of string ones.}, which is more
-then the production data would have, but gave the testing more data to stress the databases.
+than the production data would have, but gave the testing more data to encumber the databases.
 The metrics names were \texttt{test[Int|Str]NNN}, where \texttt{NNN} stands for a number. The
 integer values were all picked from the interval $[1;1000]$ and the string values were one of the
-words from the NATO phonetic alphabet\cite{NATO}, which lead to the easier composition of testing queries. 
+words from the NATO phonetic alphabet~\cite{NATO}, which lead to easier composition of testing queries. 
 Integer fields represent continuous data types and string fields represent discreet data types.
 
-The data in form of two csv files with lines \texttt{id,metaname,value} and the sizes of 53 and 59~GB.
+The data was stored in two CSV files with lines \texttt{id,metaname,value} and the sizes of 53 and 59~GB.
 
 \subsection{Loading the Big Data}
 
@@ -260,13 +259,14 @@ Both databases feature bulk loading functionality. Although the user will not pr
 this project, which involved testing the databases on a large data, the loading of the them was one 
 of the challenges.
 
-Elasticsearch python interface features a bulk load function (default data chunk size is 500 records). 
-Unfortunately it crashes on a TimeoutException from time to time making the loading a rather long procedure. 
+ES python interface features a bulk load function (the default data chunk size is 500 records). 
+Unfortunately it crashes on a TimeoutException from time to time, making the loading by a simple script a rather long 
+procedure. We have not been able to discover the cause of the exception.
 
 MongoDB features a command \texttt{mongoimport} which can read a file of JSON objects and load
-them all. Its' pace on the test data was approximately $150-200$ entries per second. Unfortunately 
+them all. Its pace on the test data was approximately $150-200$ entries per second. Unfortunately 
 the script froze from time to time so loading the whole dataset took again several days. Once the data was
-loaded, they could be backed up using the utility \texttt{mongodump} and then again loaded using the 
+loaded, it could be backed up using the utility \texttt{mongodump} and then again loaded using the 
 command \texttt{mongorestore}. These two utilities ran without problems and were used when changing the 
 storage engine.
 
@@ -276,10 +276,10 @@ The task of the database in this deployment will be to accept a query, execute t
 ids of documents\footnote{Document ids are mapped on file ids, so this procedure is returning the ids of files
 that satisfy the query} satisfying the query. To measure the results as precisely as possible, a list of
 queries was generated. When testing one database, all other database services were stopped so that they did not
-interfere with the test. To effectively search for data in MongoDB the document properties have to be 
-indexed manually. Indexes were made on several integer fields (testInt1-8) and three string fields 
+interfere with the test. As we mentioned, to effectively search for data in MongoDB the document properties have to be 
+indexed manually. Indices were made on several integer fields (testInt1-8) and three string fields 
 (testStr1,testStr2,testStr3). The time cost of building\footnote{for the default storage engine} the 
-indexes and their space requirements are listed in Table~\ref{tab:indexBuildTimes}.
+indices and their space requirements are listed in Table~\ref{tab:indexBuildTimes}.
 
 \begin{table}[h]
 \centering
@@ -298,30 +298,30 @@ testInt6 & & 00:21:03 & 211 407           & 46 789          \\ \hline
 testInt7 & & 00:19:57 & 211 399           & 46 785          \\ \hline
 testInt8 & & 00:19:58 & 211 390           & 46 785          \\ \toprule
 \end{tabular}
-\caption{The time and storage requirements for indexes used in MongoDB. The indexes were built while using
+\caption{The time and storage requirements for indices used in MongoDB. The indices were built while using
 the MMAP storage engine. Sizes are in MB.}
 \label{tab:indexBuildTimes}
 \end{table}
 
-Elasticsearch does not have a similar limitation, however the queries were kept
+ES does not have a similar limitation, however the queries were kept
 the same so that the comparison is as correct as possible.
 
 The queries were generated randomly combining the integer and string properties. The number of hits was not 
-considered while generating the queries. All the queries used can be seen in Appendix~\ref{app:queries}.
+considered while generating the queries. All the queries used can be found in Appendix~\ref{app:queries}.
 
 The program testing the performance is a python script running on a personal computer in the same LAN as the 
 database machine (similarly to the expected deployment of the service). The measured time is the interval between 
 the moment the query was submitted, to the moment the results were extracted to a python list. Neither the 
 preparation of the query, nor the printing of the results were included in the final time. 
 
-For Elasticsearch the cache of the index was flushed after every query to keep the results consistent (although as 
+For ES the cache of the index was flushed after every query to keep the results consistent (although as 
 Figure~\ref{fig:EScache} suggests, flushing the cache does not make a notable difference for bigger data volumes). 
 
 \begin{figure}[h]
 	\centering
 	\input{img/ES_comparison2.tex}
 %	\includegraphics[width=\textwidth]{ES_comparison.pdf}
-	\caption{Query times for Elasticsearch comparing performance with and without dumping depending on number of 
+	\caption{Query times for Elasticsearch comparing performance with and without dumping depending on the number of 
 	hits (logarithmic scale)}
 	\label{fig:EScache}
 \end{figure}
@@ -336,14 +336,14 @@ can be seen in Table~\ref{tab:MongoComp} and query performance in Figure~\ref{fi
 \centering
 \begin{tabular}{lccc}
 \toprule
-\textbf{Storage engine}             & \textbf{Total database size} & \textbf{Total index size} \\ 
+\textbf{Storage Engine}       & \textbf{Total Database Size} & \textbf{Total Index Size} \\ 
 \midrule
-MMAPv1                              & 136 161                      & 2 579 \\ 
-WiredTiger with zlib compression    & 22 788                       & 615   \\ 
-WiredTiger with default compression & 42 249                       & 616   \\ 
+MMAPv1                        & 136 161                      & 2 579 \\ 
+WiredTiger with zlib comp.    & 22 788                       & 615   \\ 
+WiredTiger with default comp. & 42 249                       & 616   \\ 
 \toprule
 \end{tabular}
-\caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indexes does not depend on the
+\caption{Disk usage comparison of MongoDBs storage engines. Note the size of the indices does not depend on the
 compression used. All sizes are in MB.}
 \label{tab:MongoComp}
 \end{table}
@@ -358,8 +358,8 @@ compression used. All sizes are in MB.}
 	\label{fig:MDBcomparison}
 \end{figure}
 
-We can conclude: if the administrator does not have a critically low amount of disk space available, MongoDB
-works best with the new WiredTiger storage engine with default compression. In Figure~\ref{fig:DBscomparison} we 
+We can conclude as follows: if the administrator does not have a critically low amount of disk space available, MongoDB
+works best with the new WiredTiger storage engine with the default compression. In Figure~\ref{fig:DBscomparison} we 
 can see the comparison of performance on the sample queries between the WiredTiger configuration of MongoDB and 
 Elasticsearch. 
 
@@ -367,35 +367,35 @@ Elasticsearch.
 	\centering
 	\input{img/DBs_comparison2.tex}
 	%\includegraphics[width=\textwidth]{DBs_comparison.pdf}
-	\caption{Comparison between Elasticsearch (ES) and the best performing MongoDB (MDB WT) configuration.}
+	\caption{Comparison between ES and the best performing MongoDB (MDB WT) configuration.}
 	\label{fig:DBscomparison}
 \end{figure}
 
 The queries on MongoDB are taking much more time than on Elasticsearch. MongoDB provides
-a tool for explaining query execution. This comes in very useful when trying to investigate efficiency problems
+a tool for explaining query execution. This becomes very useful when trying to investigate efficiency problems
 like this one. In the listing in Appendix~\ref{app:MDB}, one can see the output of the command for one of the 
-sample queries. The query planner tries all the indexes associated with one of the queried properties, then 
-picks one and based on just this one performs the search. The search results are then filtered so that the 
+sample queries. The query planner tries all the indices associated with one of the queried properties, then 
+selects one and based on just this one performs the search. The search results are then filtered so that the 
 returned 
 fields satisfy the other conditions of the input query. To test the best possible performance, special compound 
-indexes were created for each query and the performance was tested using these indexes. 
+indices were created for each query and the performance was tested using these indices. 
 
 \begin{figure}[h]
 	\centering
 	\input{img/MDBcompound.tex}
-	\caption{Comparison between MongoDB with indexes created especially for the tested queries (MDB comp) and 
-	Elasticsearch. To show the improvement the MongoDB performance without the compound indexes is graphed as well
+	\caption{Comparison between MongoDB with indices created especially for the tested queries (MDB comp) and 
+	ES. To show the improvement the MongoDB performance without the compound indices is graphed as well
 	(MDB WT)}
 	\label{fig:MDBcompound}
 \end{figure}
 
 Creating an index for each query is not the preferred usage pattern in this case. Also Figure~\ref{fig:MDBcompound} 
-clearly states that even with these specialized indexes MongoDB shows worse performance 
-than Elasticsearch, although there is a great improvement when compared to the version without the new indexes.  
+clearly states that even with these specialized indices MongoDB shows worse performance 
+than Elasticsearch, although there is a great improvement when compared to the version without the new indices.  
 
 \subsection{The Comparison Between NoSQL and the Current Deployment}
 
-Currently the database back-end to all the services in DIRAC, where a database is needed including the File 
+As we mentioned, currently the database back-end to all the services in DIRAC, where a database is needed including the File 
 Catalog and its metadata part, is relying on MySQL. The table scheme of the metadata part of the DFC can be seen 
 in Figure~\ref{fig:DFCUML}.
 
@@ -403,13 +403,13 @@ in Figure~\ref{fig:DFCUML}.
 	\centering
 	\includegraphics[width=\textwidth]{DFCDB.pdf}
 	\caption{The File Catalog part of the database scheme. The tables on the left are created implicitly with the
-	rest of the scheme, they are used  for keeping track of the types of metafields and un-indexed  metadata 
+	rest of the scheme. They are used  for keeping the track of the types of metafields and un-indexed  metadata 
 	values. For each new indexed field a new table is created, in this scheme there are 3 indexed file metafields
 	(X, Y, Z) and three indexed directory metafields (A,B,C).}
 	\label{fig:DFCUML}
 \end{figure}
 
-In order to see if it is worth to start using a NoSQL database, in this project we compared current deployment  
+In order to see if it is worth to start using a NoSQL database, in this project we compared the current deployment  
 with the database that performed the
 best in the tests we completed. When trying to test the MySQL database against the same queries 
 by only loading the relevant data (creating tables only for 8 integer typed metadata and 3 string ones), the 
@@ -418,12 +418,10 @@ the whole dataset in memory and did not have to use the disk when executing the 
 behavior, because the database engine will most likely not serve only the DFC metadata catalog, so there will not
 be enough memory space to keep all the metadata in cache. To test how the database could behave in production, the 
 command \texttt{flush tables;} was used after every query to dump the cached tables. Also the whole dataset
-was inserted into the database. This also let us to compare the size of data indexed by MySQL and by NoSQL (
-Table~\ref{tab:allDbSizes}). 
+was inserted into the database. This also let us to compare the size of data indexed by MySQL and by NoSQL (Table~\ref{tab:allDbSizes}). 
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\label{tab:allDbSizes}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Database}      & & \textbf{Total database size}  \\ 
@@ -434,32 +432,33 @@ csv files              & & 113 384                       \\
 MySQL                  & & 185 135                       \\ 
 \toprule
 \end{tabular}
-\caption{The comparison disk usage for all databases. For an illustration the size of the input csv files is
+\caption{The comparison of disk usage for all databases. For an illustration the size of the input CSV files is
 shown. All sizes are in MB.}
+\label{tab:allDbSizes}
 \end{table}
 
-To test the databases more thoroughly a new set of queries was created. These queries consult more than just the 
-small set of metafields indexed by the MongoDB. The MySQL on this set proved itself better on queries consulting
-a lesser number of metafields and a larger number of hits. Performance of Elasticsearch seems to be proportionate
-to the number of hits while the complexity of the query does not seem to have an effect on its speed (results in 
-Figure~\ref{fig:wide}).
+To test the databases more thoroughly a new set of queries was created. These queries involve more than just the 
+small set of metafields indexed by the MongoDB. MySQL on this set proved itself better on queries consulting
+a lesser number of metafields and a larger number of hits. Performance of Elasticsearch seems to correspond
+to the number of hits while the complexity of the query does not seem to have an effect on its speed (results are provided 
+in Figure~\ref{fig:wide}).
 
-\begin{figure}[h]
-	\centering
-	\input{img/ES_MySQL_wide.tex}
-	\caption{Comparison between the now deployed MySQL and Elasticsearch (ES) on a larger set of queries. 
-	Elasticsearch performance with data re-indexed to one shard is also graphed (ES one shard).}
-	\label{fig:wide}
-\end{figure}
-
-In all the tests above Elasticsearch and its indexes were left with the default settings. Because ES is primarily 
+In all the tests above Elasticsearch and its indices were left with the default settings. Since ES is primarily 
 a distributed store, the default setting assumes that there will be more than just one server in the cluster. This
 means that for every read several nodes have to be contacted and even though the testing deployment consists of 
-only one server, the index cut the data into 5 shards\footnote{A shard is a single Lucene instance. It is a low-
-level ``worker" unit which is managed automatically by Elasticsearch. An index is a logical namespace which points 
+only one server, the index cut the data into 5 shards\footnote{A shard is a single Lucene instance. It is a low-level
+``worker" unit which is managed automatically by Elasticsearch. An index is a logical namespace which points 
 to primary and replica shards.} (default setting). The volume of data used 
-in this project is not as large to need a whole cluster to be stored in so it was re-indexed into an index 
+in this project is not as large to need a whole cluster to be stored so it was re-indexed into an index 
 with no replicas and only one primary shard, which is ideal when only one server is used. Also it comes closer to 
 the MySQL database, because it can be run on only one server. The performance on re-indexed data was not 
 significantly better and an even worse performance drop is observable when fetching a large number of documents. 
 The queries contained from 2 to 6 conditions (consulted 2 to 6 different metadata).
+
+\begin{figure}[h]
+	\centering
+	\input{img/ES_MySQL_wide.tex}
+	\caption{Comparison between the currently deployed MySQL and ES on a larger set of queries. 
+	ES performance with data re-indexed to one shard is also graphed (ES one shard).}
+	\label{fig:wide}
+\end{figure}

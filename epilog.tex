@@ -3,7 +3,7 @@
 \label{chap:conc}
 
 This project successfully added dataset support to the DIRAC File Catalog making DIRAC even more 
-versatile. Dataset support was actively requested by two experiments, that can now start using DIRAC. 
+versatile. The dataset support was actively requested by two experiments, that can now start using DIRAC. 
 Closely coupled with the dataset functionality went the development of the new MetaQuery
 class that extended the metaquery language by adding more logical operators. The new MetaQuery also
 supports normalization and optimization of the query input, opening new possibilities for future usage
@@ -16,7 +16,7 @@ queries. A better performance is observable when applying 4 and more constraints
 hits.
 
 To prove the concept of connecting a NoSQL database to DIRAC, a new module was developed to provide 
-a interface between DFC and the database. As the back-end database Elasticsearch was used, because it performed
+an interface between DFC and the database. As the back-end database Elasticsearch was used, because it performed
 best in the conducted tests. To improve the query performance, the complexity was moved from the python code of
 DIRAC to the database engine. This was traded by adding complexity to the management procedures. These do not have 
 to be, unlike the query mechanism, optimized for time performance.
@@ -25,7 +25,7 @@ In future if the DIRAC collaboration decides to use Elasticsearch as the databas
 catalog, more functionality can be added using Elasticsearch specific features. 
 For example when a query is executed, the number of documents satisfying it is returned before all the documents are 
 fetched. This could be used for example when checking the properties of a dynamic dataset or when trying to predict
-the time for fetching all the results of a particular query could be. Also new comparison 
+the time for fetching all the results of a particular query. Also new comparison 
 operators translating to one of Elasticsearch query 
 types\footnote{\url{https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html}} can be 
 added to extend the metaquery language.

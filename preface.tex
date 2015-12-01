@@ -3,12 +3,23 @@
 
 \section*{The Worldwide LHC Computing Grid}
 
-One of the most important tasks of the fundamental physics is to reveal at the microscopic level the basic 
-ingredients of the matter and their interactions. To get at very short length scales physicists collide particles
-accelerated to enormous energies. On the edge of our millennium their ultimate instrument is the Large Hadron 
+In the past decade the scientific research collaborations, as well as the
+commercial world, have witnessed the start of a  period  of  explosive
+data growth. The expressions like "Data Tsunami" or "Big Data" became widespread
+and entered a standard terminology~\cite{OSC}. The scientific collaborations developed a
+world leading expertise in building and operating very large scale infrastructures for
+handling unprecedented and ever growing volumes of data to be processed and analyzed.  
+One of the most important scientific communities,
+for which these abilities became essential, is the High Energy Physics (HEP) community of 
+the experiments at the Large Hadron
 Collider (LHC) at CERN\footnote{European Organization for Nuclear Research 
 (name derived from Conseil Européen pour la Recherche Nucléaire) -- European research organization that operates 
-the largest particle physics laboratory in the world.} in Geneva, colliding protons or atomic nuclei. In each 
+the largest particle physics laboratory in the world.}.
+
+One of the most important tasks of the fundamental physics is to reveal at the microscopic level the basic 
+ingredients of the matter and their interactions. To get at very short length scales physicists collide particles
+accelerated to enormous energies. On the edge of our millennium their ultimate instrument is the LHC, colliding protons or 
+atomic nuclei. In each 
 collision debris of tens of thousands of new particles are created which have to be registered in huge detectors 
 and carefully analyzed for signs of new physical phenomena. The collisions take part at four interaction areas, 
 where the detectors (ATLAS, ALICE, CMS and LHCb) were built. Each experiment collects huge volume of data that have
@@ -22,6 +33,13 @@ distributed data management was conceived. In 2001 the CERN Council approved the
 collaborative project that consists of a grid-based computer network infrastructure, the Worldwide LHC Computing 
 Grid (WLCG)~\cite{happyBday}. 
 
+\begin{wrapfigure}{L}{0.6\textwidth}
+\centering
+\includegraphics[width=0.55\textwidth]{Tiers.pdf}
+\caption{The WLCG Tier-1 centers with CERN Tier-0 in the middle}
+\label{fig:WLCG}
+\end{wrapfigure}
+
 The WLCG has a hierarchical architecture, where participating sites are categorized -- according to the resources 
 and services they provide -- into four importance levels called Tiers. Each Tier is represented by a single or 
 distributed computing and storage cluster and yields a specific set of services. The largest center, CERN data 
@@ -30,13 +48,6 @@ processing. Although it contributes less than 20\% of the WLCG computing capacit
 keeping one copy of the data from all experiments and for performing the first pass of the data reconstruction. 
 When LHC is not running, Tier-0 provides resources for re-processing of the raw experimental data and eventually 
 for simulation campaigns. 
-
-\begin{wrapfigure}{L}{0.6\textwidth}
-\centering
-\includegraphics[width=0.55\textwidth]{Tiers.pdf}
-\caption{The WLCG Tier-1 centers with CERN Tier-0 in the middle}
-\label{fig:WLCG}
-\end{wrapfigure}
 
 Another copy is passed to one of the Tier-1 centers. Tier-1s are huge computing centers located in Europe, Canada, USA 
 and Taipei. They provide non-stop support for the Grid, store a share of raw data, perform reprocessing and store 
@@ -65,11 +76,11 @@ individual experiments' computing models.
 
 The DIRAC\footnote{The Distributed Infrastructure with Remote Agent Control} middleware was developed to satisfy
 the needs of not only the LHCb collaboration developing it, but also to enable other smaller experiments to use
-it as their middleware solution. This was achieved by focusing on modular architecture that helps when
+it as their middleware solution. This was achieved by focusing on modular architecture that enables
 adding new features or modifying the systems behavior according to individual experiment's needs. 
 
 DIRAC is constructed from loosely coupled systems where each system manages one part of its functionality. This 
-thesis concentrates on the DIRAC File Catalog, which is a part of the Data Management system. This particular 
+thesis focuses on the DIRAC File Catalog, which is a part of the Data Management system. This particular 
 system is responsible for data managing tasks across a wide range of distributed storage elements. It also enables 
 users to quickly find and use their files. It is accomplished by maintaining a 
 directory structure with a similar interface as the UNIX shell and enabling users to define their own metadata
@@ -93,14 +104,14 @@ collaboration.
 
 \section*{Structure of the Thesis}
 
-In Chapter~\ref{chap:DIRAC} the DIRAC middleware will be introduced with a focus on the data management part and the 
+In Chapter~\ref{chap:DIRAC} the DIRAC middleware will be introduced with the focus on the data management part and the 
 file catalog. Afterwards DIRAC will be compared to two other middleware solutions in Chapter~\ref{chap:relwork}, 
 more specifically ATLAS Distributed Data Management system and ALICE Environment framework.
 
 In the next two chapters our contribution to DIRACs code will be presented. The Chapter~\ref{chap:MQ} 
 is about the new MetaQuery class and the Chapter~\ref{chap:Dataset} deals with the Dataset Manager.
 
-In the last part several NoSQL databases are tested in order to select the one that is the best for storing
+In the last part several NoSQL databases will be tested in order to select the one that is the best option for storing
 file metadata (Chapter~\ref{chap:databases}) and in the Chapter~\ref{chap:NoSQL} a module created for integrating 
 that database is described. 
 

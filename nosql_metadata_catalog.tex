@@ -1,15 +1,15 @@
 \chapter{NoSQL Integration into DFC}
 \label{chap:NoSQL}
 
-To prove the concept of connecting the metadata part of the DIRAC File Catalog to a NoSQL database the 
+To prove the concept of connecting the metadata part of the DIRAC File Catalog to a NoSQL database 
 modules \texttt{fmeta} and \texttt{dmeta} that manage the metadata in the FileCatalog service were modified.
 As discussed in the previous chapter, the best available NoSQL database for this particular purpose is 
 Elasticsearch. 
 
 \section{Query Strategy}
-The current query search algorithm cuts the query per element of the disjunction. With each element the Catalog
-finds directories satisfying the directory part of the query, then it finds the files satisfying the file part. 
-With the list of files and list of directories it filters out the files that are not in the sub-tree of one of the
+The current query search algorithm cuts the query per element of the disjunction. With each element the File Catalog
+finds directories satisfying the directory part of the query. Then it finds the files satisfying the file part. 
+With the list of files and list of directories it filters the files that are not in the sub-tree of one of the
 satisfying directories (the algorithm is described by Algorithm~\ref{alg:find}).
 
 \begin{algorithm}[h]
@@ -32,15 +32,15 @@ satisfying directories (the algorithm is described by Algorithm~\ref{alg:find}).
 \end{algorithm}
 
 The procedure is so complicated, because the metadata for directories and for files are managed by different 
-modules (in the algorithm, the function \texttt{findDirectories} is in module \texttt{dmeta} and \texttt{findFiles} 
+modules (in the algorithm, function \texttt{findDirectories} is in module \texttt{dmeta} and \texttt{findFiles} 
 is handled by \texttt{fmeta}). This can result in unnecessary fetching of files, which are then dropped because
 they happen to be located in a directory that does not satisfy the query. This is especially relevant because as
-the tests done by this project suggest the query speed of Elasticsearch unlike MySQL depends mainly on the
+the tests done by this project suggest, the query speed of Elasticsearch unlike MySQL depends mainly on the
 number of hits it has to retrieve and
 not on the complexity of the query (see Figure~\ref{fig:wide}). 
 
-The solution could be letting database engine deal 
-with the complexity of the search algorithm. This would mean storing all the metadata associated with a file (its' 
+The solution could be letting the database engine deal 
+with the complexity of the search algorithm. This would mean storing all the metadata associated with a file (its
 own as well as the ones inherited from the directory structure) in the files document. This would increase
 disk space (but as Table~\ref{tab:allDbSizes} suggests, Elasticsearch is much more space efficient when compared 
 to MySQL) as well as the difficulty of metadata management. The inheritance of metadata through the directory 
@@ -48,12 +48,12 @@ structure has to be maintained when setting and unsetting them. The result would
 only consist of translating the metaquery from the internal representation to an Elasticsearch compatible form 
 (which is now done per element in functions \texttt{findDirectories} and \texttt{findFiles}) and submitting the
 query. What would be sacrificed is the fact that directory and file metadata can be handled in a completely 
-different fashion.
+different manner.
 
 \section{The New Implementation}
 
 A new module has been developed to create a specialized interface between the database and the metadata catalog. This 
-also minimized the changes that had to be done on the current metadata managing modules (the practice where one
+also minimized the changes that had to be done in the current metadata managing modules (the practice where one
 module manages directory metadata and another manages file metadata was preserved). As discussed above, the 
 module stores all the metadata in one document to improve the speed of queries. Setting and un-setting directory 
 metadata is a rather complicate procedure, which requires fetching all the documents associated with files in
@@ -63,10 +63,11 @@ directory).
 Removing a property from a document in Elasticsearch is not one of the basically supported operations. There are 
 two ways to implement it: 
 \begin{enumerate}
-\item Get the whole document from the database, remove the property and insert it again.
-\item Submit a script that deletes the property from the document inside the database in a update-like operation.
+\item get the whole document from the database, remove the property and insert it again;
+\item submit a script that deletes the property from the document inside the database in a update-like operation.
 \end{enumerate}
-Because the scripting has to be enabled by the database administrator and it is not guaranteed for the DIRAC 
+
+\noindent Since the scripting has to be enabled by the database administrator and it is not guaranteed for the DIRAC 
 administrator to have administrator access to the database as well, the first approach was chosen. This means that
 removing a metadata from a directory that has lots of files in its sub-tree is a non-trivial operation and shall
 be executed as rarely as possible. Updating and setting new metadata can be done by a simple command.
